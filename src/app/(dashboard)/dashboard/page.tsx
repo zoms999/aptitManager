@@ -1,5 +1,6 @@
 import Link from "next/link";
 import { UserRound, Building, FileCheck, Users } from "lucide-react";
+import { db } from "@/lib/db/prisma";
 
 // 사용자 정의 타입
 interface User {
@@ -9,36 +10,68 @@ interface User {
   org?: string;
 }
 
-// 임시 데이터
-const recentUsers: User[] = [
-  { id: "kimmingi09", name: "김민기", timestamp: "2025-04-12 03:19:37" },
-  { id: "parkjoon15", name: "박준서", timestamp: "2025-04-10 14:22:15" },
-  { id: "leesora81", name: "이소라", timestamp: "2025-04-09 09:45:32" },
-  { id: "jeongwoo72", name: "정우진", timestamp: "2025-04-08 17:11:03" },
-];
+export default async function DashboardPage() {
+  // 총 사용자 수 조회
+  const totalAccounts = await db.$queryRaw`SELECT COUNT(*) FROM mwd_account WHERE ac_use = 'Y'`;
+  const userCount = totalAccounts[0].count;
+  
+  // 기관 수 조회
+  const totalInstitutes = await db.$queryRaw`SELECT COUNT(*) FROM mwd_institute`;
+  const instituteCount = totalInstitutes[0].count;
+  
+  // 검사 완료 수 조회
+  const totalCompleted = await db.$queryRaw`SELECT COUNT(*) FROM mwd_answer_progress WHERE anp_done = 'E'`;
+  const completedCount = totalCompleted[0].count;
+  
+  // 매니저 수 조회
+  const totalManagers = await db.$queryRaw`SELECT COUNT(*) FROM mwd_manager WHERE mg_use = 'Y'`;
+  const managerCount = totalManagers[0].count;
+  
+  // 최근 등록 (개인) 조회
+  const recentPersonalAccounts = await db.$queryRaw`
+    SELECT ac.ac_id as id, pe.pe_name as name, TO_CHAR(ac.ac_insert_date, 'YYYY-MM-DD HH24:MI:SS') as timestamp 
+    FROM mwd_account ac, mwd_person pe 
+    WHERE ac.pe_seq = pe.pe_seq 
+    ORDER BY ac.ac_insert_date DESC 
+    LIMIT 4
+  `;
+  
+  // 최근 등록 (기관) 조회
+  const recentInstituteAccounts = await db.$queryRaw`
+    SELECT ac.ac_id as id, ins.ins_name as name, TO_CHAR(ac.ac_insert_date, 'YYYY-MM-DD HH24:MI:SS') as timestamp 
+    FROM mwd_account ac, mwd_institute ins 
+    WHERE ac.ins_seq = ins.ins_seq 
+    ORDER BY ac.ac_insert_date DESC 
+    LIMIT 4
+  `;
+  
+  // 검사 완료 (개인) 조회
+  const completedPersonalTests = await db.$queryRaw`
+    SELECT ac.ac_id as id, pe.pe_name as name, to_char(anp.anp_end_date, 'YYYY-MM-DD HH24:MI:SS') as timestamp
+    FROM mwd_account ac, mwd_person pe, mwd_answer_progress anp, mwd_choice_result cr 
+    WHERE ac.pe_seq = pe.pe_seq 
+    AND ac.ac_gid = anp.ac_gid 
+    AND anp.anp_done = 'E' 
+    AND anp.cr_seq = cr.cr_seq 
+    AND cr.pd_num < 10000 
+    ORDER BY anp.anp_end_date DESC 
+    LIMIT 4
+  `;
+  
+  // 검사 완료 (팀별) 조회
+  const completedTeamTests = await db.$queryRaw`
+    SELECT ac.ac_id as id, pe.pe_name as name, ins.ins_name as org, to_char(anp.anp_end_date, 'YYYY-MM-DD HH24:MI:SS') as timestamp
+    FROM mwd_account ac, mwd_person pe, mwd_answer_progress anp, mwd_choice_result cr, mwd_institute ins 
+    WHERE ac.pe_seq = pe.pe_seq 
+    AND ac.ac_gid = anp.ac_gid 
+    AND ac.ins_seq = ins.ins_seq
+    AND anp.anp_done = 'E' 
+    AND anp.cr_seq = cr.cr_seq 
+    AND cr.pd_num > 10000 
+    ORDER BY anp.anp_end_date DESC 
+    LIMIT 4
+  `;
 
-const recentOrgs: User[] = [
-  { id: "gwsu20250411", name: "장철도대학교 교수", timestamp: "2025-04-11 10:15:22" },
-  { id: "kimco20250409", name: "김포기업 인사팀", timestamp: "2025-04-09 16:30:44" },
-  { id: "techcorp0407", name: "테크놀로지 기업", timestamp: "2025-04-07 11:23:51" },
-  { id: "eduinst0403", name: "교육기관 연합", timestamp: "2025-04-03 09:05:17" },
-];
-
-const completedPersonal: User[] = [
-  { id: "hong1234", name: "홍길동", timestamp: "2025-04-10 14:22:15" },
-  { id: "kimyuna88", name: "김유나", timestamp: "2025-04-09 09:45:32" },
-  { id: "parksh77", name: "박상현", timestamp: "2025-04-08 17:11:03" },
-  { id: "leejh92", name: "이지혜", timestamp: "2025-04-06 10:33:27" },
-];
-
-const completedTeam: User[] = [
-  { id: "teamA2025", name: "A팀", org: "테크놀로지 기업", timestamp: "2025-04-09 16:30:44" },
-  { id: "teamB2025", name: "B팀", org: "교육기관 연합", timestamp: "2025-04-07 11:23:51" },
-  { id: "devteam25", name: "개발팀", org: "김포기업 인사팀", timestamp: "2025-04-05 15:42:19" },
-  { id: "hrteam25", name: "인사팀", org: "장철도대학교", timestamp: "2025-04-03 09:05:17" },
-];
-
-export default function DashboardPage() {
   return (
     <div className="space-y-4">
       <h1 className="text-3xl font-bold">대시보드</h1>
@@ -46,7 +79,7 @@ export default function DashboardPage() {
       <div className="grid grid-cols-1 gap-4 md:grid-cols-2 lg:grid-cols-4">
         <DashboardCard 
           title="총 사용자"
-          value="3,154"
+          value={userCount.toLocaleString()}
           icon={<UserRound className="h-7 w-7" />}
           href="/accounts"
           color="bg-blue-50 dark:bg-blue-950"
@@ -54,7 +87,7 @@ export default function DashboardPage() {
         />
         <DashboardCard 
           title="기관 수"
-          value="215"
+          value={instituteCount.toLocaleString()}
           icon={<Building className="h-7 w-7" />}
           href="/companies"
           color="bg-green-50 dark:bg-green-950"
@@ -62,7 +95,7 @@ export default function DashboardPage() {
         />
         <DashboardCard 
           title="검사 완료"
-          value="12,872"
+          value={completedCount.toLocaleString()}
           icon={<FileCheck className="h-7 w-7" />}
           href="/results"
           color="bg-purple-50 dark:bg-purple-950"
@@ -70,7 +103,7 @@ export default function DashboardPage() {
         />
         <DashboardCard 
           title="매니저"
-          value="42"
+          value={managerCount.toLocaleString()}
           icon={<Users className="h-7 w-7" />}
           href="/managers"
           color="bg-orange-50 dark:bg-orange-950"
@@ -79,13 +112,13 @@ export default function DashboardPage() {
       </div>
       
       <div className="grid grid-cols-1 gap-4 md:grid-cols-2">
-        <ListCard title="최근 등록 (개인)" items={recentUsers} />
-        <ListCard title="최근 등록 (기관)" items={recentOrgs} />
+        <ListCard title="최근 등록 (개인)" items={recentPersonalAccounts} />
+        <ListCard title="최근 등록 (기관)" items={recentInstituteAccounts} />
       </div>
       
       <div className="grid grid-cols-1 gap-4 md:grid-cols-2">
-        <ListCard title="검사 완료 (개인)" items={completedPersonal} />
-        <ListCard title="검사 완료 (팀별)" items={completedTeam} />
+        <ListCard title="검사 완료 (개인)" items={completedPersonalTests} />
+        <ListCard title="검사 완료 (팀별)" items={completedTeamTests} />
       </div>
     </div>
   );

@@ -78,7 +78,7 @@
 # Cursor AI 최적화 룰 파일 (Next.js 15.3.0)
 
 ## 프로젝트 위치
-E:\work_test\manager\manager
+E:\work_test\manager
 
 
 ## 개발 환경 설정
