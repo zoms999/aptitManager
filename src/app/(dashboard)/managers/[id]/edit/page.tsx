@@ -338,7 +338,6 @@ export default function EditManagerPage({ params }: EditManagerPageProps) {
               <Input 
                 type="password" 
                 name="mg_pw" 
-                value={formData.mg_pw || ''} 
                 onChange={handleChange} 
                 placeholder="변경 시에만 입력"
               />

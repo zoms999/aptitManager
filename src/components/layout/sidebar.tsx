@@ -57,12 +57,12 @@ const navItems: NavItem[] = [
     submenuItems: [
       { 
         title: "기관관리", 
-        href: "/accounts/institutions",
+        href: "/institutions",
         icon: <Building className="h-3.5 w-3.5" />,
       },
       { 
         title: "개인관리", 
-        href: "/accounts/individuals",
+        href: "/individuals",
         icon: <User className="h-3.5 w-3.5" />,
       }
     ]
