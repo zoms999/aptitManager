@@ -80,8 +80,8 @@ export default function ManagersPage() {
       <div className="mb-10">
         <div className="flex flex-col md:flex-row justify-between items-start md:items-center gap-4 mb-4">
           <div className="flex items-center gap-3">
-            <div className="bg-indigo-100 p-3 rounded-lg">
-              <Users className="h-6 w-6 text-indigo-600" />
+            <div className="bg-blue-800 p-3 rounded-lg">
+              <Users className="h-6 w-6 text-blue-100" />
             </div>
             <div>
               <h1 className="text-3xl font-bold text-gray-800">관리자 관리</h1>
@@ -89,7 +89,7 @@ export default function ManagersPage() {
             </div>
           </div>
           <Link href="/managers/new">
-            <Button className="rounded-lg bg-indigo-600 hover:bg-indigo-700 shadow-sm transition-all px-5 py-2.5 h-11">
+            <Button className="rounded-lg bg-blue-800 hover:bg-blue-900 shadow-sm transition-all px-5 py-2.5 h-11 text-blue-50">
               <Plus className="h-5 w-5 mr-2" />
               관리자 추가
             </Button>
@@ -106,16 +106,16 @@ export default function ManagersPage() {
               placeholder="이름 또는 이메일로 검색"
               value={searchTerm}
               onChange={(e: React.ChangeEvent<HTMLInputElement>) => setSearchTerm(e.target.value)}
-              className="pl-10 pr-4 py-2.5 rounded-lg border-gray-200 bg-gray-50 focus:bg-white focus:border-indigo-500 focus:ring-indigo-500 h-11"
+              className="pl-10 pr-4 py-2.5 rounded-lg border-gray-200 bg-gray-50 focus:bg-white focus:border-blue-800 focus:ring-blue-800 h-11"
             />
           </div>
-          <Button type="submit" className="rounded-lg bg-indigo-600 hover:bg-indigo-700 shadow-sm transition-all px-5 py-2.5 h-11">
+          <Button type="submit" className="rounded-lg bg-blue-800 hover:bg-blue-900 shadow-sm transition-all px-5 py-2.5 h-11 text-blue-50">
             검색
           </Button>
         </form>
         <div className="flex items-center justify-between mt-5 flex-wrap gap-2">
           <div className="flex items-center gap-2 text-sm text-gray-600">
-            <FileText className="h-4 w-4 text-indigo-600" />
+            <FileText className="h-4 w-4 text-blue-800" />
             <span>전체: <b>{totalCount}</b>명의 관리자</span>
           </div>
         </div>
@@ -124,68 +124,68 @@ export default function ManagersPage() {
       <div className="overflow-hidden rounded-xl shadow-md border border-gray-100 bg-white">
         <div className="overflow-x-auto">
           <Table className="w-full border-collapse">
-            <TableHeader className="bg-gradient-to-r from-indigo-50 to-purple-50">
-              <TableRow className="border-b border-indigo-100">
-                <TableHead className="py-4 px-4 text-sm font-bold text-indigo-700 text-center w-[5%]">번호</TableHead>
-                <TableHead className="py-4 px-4 text-sm font-bold text-indigo-700 text-center w-[10%]">
+            <TableHeader className="bg-gradient-to-r from-blue-900 to-blue-800">
+              <TableRow className="border-b border-blue-700">
+                <TableHead className="py-4 px-4 text-sm font-bold text-blue-50 text-center w-[5%]">번호</TableHead>
+                <TableHead className="py-4 px-4 text-sm font-bold text-blue-50 text-center w-[10%]">
                   <div className="flex items-center justify-center gap-2">
                     <User className="h-4 w-4" />
                     이름
                   </div>
                 </TableHead>
-                <TableHead className="py-4 px-4 text-sm font-bold text-indigo-700 text-center w-[15%]">
+                <TableHead className="py-4 px-4 text-sm font-bold text-blue-50 text-center w-[15%]">
                   <div className="flex items-center justify-center gap-2">
                     <Mail className="h-4 w-4" />
                     이메일
                   </div>
                 </TableHead>
-                <TableHead className="py-4 px-4 text-sm font-bold text-indigo-700 text-center w-[10%]">
+                <TableHead className="py-4 px-4 text-sm font-bold text-blue-50 text-center w-[10%]">
                   <div className="flex items-center justify-center gap-2">
                     <Phone className="h-4 w-4" />
                     연락처
                   </div>
                 </TableHead>
-                <TableHead className="py-4 px-4 text-sm font-bold text-indigo-700 text-center w-[7%]">상태</TableHead>
-                <TableHead className="py-4 px-4 text-sm font-bold text-indigo-700 text-center w-[7%]">
+                <TableHead className="py-4 px-4 text-sm font-bold text-blue-50 text-center w-[7%]">상태</TableHead>
+                <TableHead className="py-4 px-4 text-sm font-bold text-blue-50 text-center w-[7%]">
                   <div className="flex flex-col items-center justify-center">
-                    <Shield className="h-4 w-4 mb-1" />
-                    <span className="text-xs">관리자관리</span>
+                    <Shield className="h-4 w-4 mb-0.5" />
+                    <span className="text-xs whitespace-nowrap">관리자관리</span>
                   </div>
                 </TableHead>
-                <TableHead className="py-4 px-4 text-sm font-bold text-indigo-700 text-center w-[7%]">
+                <TableHead className="py-4 px-4 text-sm font-bold text-blue-50 text-center w-[7%]">
                   <div className="flex flex-col items-center justify-center">
-                    <User className="h-4 w-4 mb-1" />
-                    <span className="text-xs">회원관리</span>
+                    <User className="h-4 w-4 mb-0.5" />
+                    <span className="text-xs whitespace-nowrap">회원관리</span>
                   </div>
                 </TableHead>
-                <TableHead className="py-4 px-4 text-sm font-bold text-indigo-700 text-center w-[7%]">
+                <TableHead className="py-4 px-4 text-sm font-bold text-blue-50 text-center w-[7%]">
                   <div className="flex flex-col items-center justify-center">
-                    <FileText className="h-4 w-4 mb-1" />
-                    <span className="text-xs">결과지조회</span>
+                    <FileText className="h-4 w-4 mb-0.5" />
+                    <span className="text-xs whitespace-nowrap">결과지조회</span>
                   </div>
                 </TableHead>
-                <TableHead className="py-4 px-4 text-sm font-bold text-indigo-700 text-center w-[7%]">
+                <TableHead className="py-4 px-4 text-sm font-bold text-blue-50 text-center w-[7%]">
                   <div className="flex flex-col items-center justify-center">
-                    <Settings className="h-4 w-4 mb-1" />
-                    <span className="text-xs">기관관리</span>
+                    <Settings className="h-4 w-4 mb-0.5" />
+                    <span className="text-xs whitespace-nowrap">기관관리</span>
                   </div>
                 </TableHead>
-                <TableHead className="py-4 px-4 text-sm font-bold text-indigo-700 text-center w-[7%]">
+                <TableHead className="py-4 px-4 text-sm font-bold text-blue-50 text-center w-[7%]">
                   <div className="flex flex-col items-center justify-center">
-                    <FileText className="h-4 w-4 mb-1" />
-                    <span className="text-xs">통계조회</span>
+                    <FileText className="h-4 w-4 mb-0.5" />
+                    <span className="text-xs whitespace-nowrap">통계조회</span>
                   </div>
                 </TableHead>
-                <TableHead className="py-4 px-4 text-sm font-bold text-indigo-700 text-center w-[7%]">
+                <TableHead className="py-4 px-4 text-sm font-bold text-blue-50 text-center w-[7%]">
                   <div className="flex flex-col items-center justify-center">
-                    <Mail className="h-4 w-4 mb-1" />
-                    <span className="text-xs">문의관리</span>
+                    <Mail className="h-4 w-4 mb-0.5" />
+                    <span className="text-xs whitespace-nowrap">문의관리</span>
                   </div>
                 </TableHead>
-                <TableHead className="py-4 px-4 text-sm font-bold text-indigo-700 text-center w-[7%]">
+                <TableHead className="py-4 px-4 text-sm font-bold text-blue-50 text-center w-[7%]">
                   <div className="flex flex-col items-center justify-center">
-                    <FileText className="h-4 w-4 mb-1" />
-                    <span className="text-xs">로그조회</span>
+                    <FileText className="h-4 w-4 mb-0.5" />
+                    <span className="text-xs whitespace-nowrap">로그조회</span>
                   </div>
                 </TableHead>
               </TableRow>
@@ -195,7 +195,7 @@ export default function ManagersPage() {
                 <TableRow>
                   <TableCell colSpan={12} className="text-center py-20">
                     <div className="flex flex-col items-center justify-center">
-                      <div className="animate-spin rounded-full h-12 w-12 border-t-2 border-b-2 border-indigo-600"></div>
+                      <div className="animate-spin rounded-full h-12 w-12 border-t-2 border-b-2 border-blue-800"></div>
                       <div className="mt-4 text-base text-gray-600">관리자 정보를 불러오는 중입니다...</div>
                     </div>
                   </TableCell>
@@ -216,60 +216,60 @@ export default function ManagersPage() {
                 managers.map((manager, index) => (
                   <TableRow 
                     key={manager.mg_seq} 
-                    className={`group cursor-pointer transition-colors hover:bg-indigo-50 border-b ${index % 2 === 0 ? 'bg-white' : 'bg-slate-50'}`}
+                    className={`group cursor-pointer transition-colors hover:bg-blue-50 border-b ${index % 2 === 0 ? 'bg-white' : 'bg-slate-50'}`}
                     onClick={() => router.push(`/managers/${manager.mg_seq}`)}
                   >
                     <TableCell className="py-4 px-4 text-base text-center font-medium text-gray-800">{manager.mg_seq}</TableCell>
                     <TableCell className="py-4 px-4 text-base text-center font-semibold">
-                      <div className="group-hover:text-indigo-700 text-indigo-600 transition-colors">{manager.mg_name}</div>
+                      <div className="group-hover:text-blue-800 text-blue-700 transition-colors">{manager.mg_name}</div>
                     </TableCell>
                     <TableCell className="py-4 px-4 text-base">{manager.mg_email || '-'}</TableCell>
                     <TableCell className="py-4 px-4 text-base text-center text-gray-700">{manager.mg_cellphone || '-'}</TableCell>
-                    <TableCell className="py-4 px-4 text-center">
+                    <TableCell className="py-4 px-4 text-center whitespace-nowrap">
                       {manager.mg_use === 'Y' ? 
-                        <Badge className="bg-green-100 text-green-800 hover:bg-green-200 px-3 py-1 font-medium">활성</Badge> : 
+                        <Badge className="bg-blue-800 text-white hover:bg-blue-900 px-3 py-1 font-medium">활성</Badge> : 
                         <Badge className="bg-red-100 text-red-800 hover:bg-red-200 px-3 py-1 font-medium">비활성</Badge>
                       }
                     </TableCell>
-                    <TableCell className="py-4 px-2 text-center border-l border-gray-100">
+                    <TableCell className="py-4 px-2 text-center border-l border-gray-100 whitespace-nowrap">
                       {manager.mg_grant_manager === 1 ? 
-                        <Badge className="bg-indigo-100 text-indigo-800 hover:bg-indigo-200 px-3 py-1 font-medium">허용</Badge> : 
+                        <Badge className="bg-blue-800 text-white hover:bg-blue-900 px-3 py-1 font-medium">허용</Badge> : 
                         <Badge className="bg-gray-100 text-gray-600 hover:bg-gray-200 px-3 py-1 font-medium border-0">미허용</Badge>
                       }
                     </TableCell>
-                    <TableCell className="py-4 px-2 text-center border-l border-gray-100">
+                    <TableCell className="py-4 px-2 text-center border-l border-gray-100 whitespace-nowrap">
                       {manager.mg_grant_account === 1 ? 
-                        <Badge className="bg-indigo-100 text-indigo-800 hover:bg-indigo-200 px-3 py-1 font-medium">허용</Badge> : 
+                        <Badge className="bg-blue-800 text-white hover:bg-blue-900 px-3 py-1 font-medium">허용</Badge> : 
                         <Badge className="bg-gray-100 text-gray-600 hover:bg-gray-200 px-3 py-1 font-medium border-0">미허용</Badge>
                       }
                     </TableCell>
-                    <TableCell className="py-4 px-2 text-center border-l border-gray-100">
+                    <TableCell className="py-4 px-2 text-center border-l border-gray-100 whitespace-nowrap">
                       {manager.mg_grant_result === 1 ? 
-                        <Badge className="bg-indigo-100 text-indigo-800 hover:bg-indigo-200 px-3 py-1 font-medium">허용</Badge> : 
+                        <Badge className="bg-blue-800 text-white hover:bg-blue-900 px-3 py-1 font-medium">허용</Badge> : 
                         <Badge className="bg-gray-100 text-gray-600 hover:bg-gray-200 px-3 py-1 font-medium border-0">미허용</Badge>
                       }
                     </TableCell>
-                    <TableCell className="py-4 px-2 text-center border-l border-gray-100">
+                    <TableCell className="py-4 px-2 text-center border-l border-gray-100 whitespace-nowrap">
                       {manager.mg_grant_institute === 1 ? 
-                        <Badge className="bg-indigo-100 text-indigo-800 hover:bg-indigo-200 px-3 py-1 font-medium">허용</Badge> : 
+                        <Badge className="bg-blue-800 text-white hover:bg-blue-900 px-3 py-1 font-medium">허용</Badge> : 
                         <Badge className="bg-gray-100 text-gray-600 hover:bg-gray-200 px-3 py-1 font-medium border-0">미허용</Badge>
                       }
                     </TableCell>
-                    <TableCell className="py-4 px-2 text-center border-l border-gray-100">
+                    <TableCell className="py-4 px-2 text-center border-l border-gray-100 whitespace-nowrap">
                       {manager.mg_grant_statistic === 1 ? 
-                        <Badge className="bg-indigo-100 text-indigo-800 hover:bg-indigo-200 px-3 py-1 font-medium">허용</Badge> : 
+                        <Badge className="bg-blue-800 text-white hover:bg-blue-900 px-3 py-1 font-medium">허용</Badge> : 
                         <Badge className="bg-gray-100 text-gray-600 hover:bg-gray-200 px-3 py-1 font-medium border-0">미허용</Badge>
                       }
                     </TableCell>
-                    <TableCell className="py-4 px-2 text-center border-l border-gray-100">
+                    <TableCell className="py-4 px-2 text-center border-l border-gray-100 whitespace-nowrap">
                       {manager.mg_grant_inquiry === 1 ? 
-                        <Badge className="bg-indigo-100 text-indigo-800 hover:bg-indigo-200 px-3 py-1 font-medium">허용</Badge> : 
+                        <Badge className="bg-blue-800 text-white hover:bg-blue-900 px-3 py-1 font-medium">허용</Badge> : 
                         <Badge className="bg-gray-100 text-gray-600 hover:bg-gray-200 px-3 py-1 font-medium border-0">미허용</Badge>
                       }
                     </TableCell>
-                    <TableCell className="py-4 px-2 text-center border-l border-gray-100">
+                    <TableCell className="py-4 px-2 text-center border-l border-gray-100 whitespace-nowrap">
                       {manager.mg_grant_log === 1 ? 
-                        <Badge className="bg-indigo-100 text-indigo-800 hover:bg-indigo-200 px-3 py-1 font-medium">허용</Badge> : 
+                        <Badge className="bg-blue-800 text-white hover:bg-blue-900 px-3 py-1 font-medium">허용</Badge> : 
                         <Badge className="bg-gray-100 text-gray-600 hover:bg-gray-200 px-3 py-1 font-medium border-0">미허용</Badge>
                       }
                     </TableCell>
@@ -286,7 +286,7 @@ export default function ManagersPage() {
           <Button 
             variant="outline" 
             size="icon"
-            className="h-10 w-10 rounded-lg cursor-pointer border-gray-200 hover:bg-indigo-50 hover:text-indigo-600 transition-colors"
+            className="h-10 w-10 rounded-lg cursor-pointer border-gray-200 hover:bg-blue-100 hover:text-blue-800 transition-colors"
             onClick={() => setCurrentPage(prev => Math.max(prev - 1, 1))}
             disabled={currentPage === 1}
           >
@@ -313,8 +313,8 @@ export default function ManagersPage() {
                 variant={currentPage === pageNum ? "default" : "outline"}
                 className={`h-10 w-10 rounded-lg cursor-pointer font-medium ${
                   currentPage === pageNum 
-                    ? 'bg-indigo-600 hover:bg-indigo-700 text-white' 
-                    : 'border-gray-200 hover:bg-indigo-50 hover:text-indigo-600'
+                    ? 'bg-blue-800 hover:bg-blue-900 text-white' 
+                    : 'border-gray-200 hover:bg-blue-100 hover:text-blue-800'
                 }`}
                 onClick={() => setCurrentPage(pageNum)}
               >
@@ -326,7 +326,7 @@ export default function ManagersPage() {
           <Button 
             variant="outline" 
             size="icon"
-            className="h-10 w-10 rounded-lg cursor-pointer border-gray-200 hover:bg-indigo-50 hover:text-indigo-600 transition-colors"
+            className="h-10 w-10 rounded-lg cursor-pointer border-gray-200 hover:bg-blue-100 hover:text-blue-800 transition-colors"
             onClick={() => setCurrentPage(prev => Math.min(prev + 1, Math.ceil(totalCount / itemsPerPage)))}
             disabled={currentPage === Math.ceil(totalCount / itemsPerPage)}
           >
