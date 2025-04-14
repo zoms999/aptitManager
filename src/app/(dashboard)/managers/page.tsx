@@ -82,7 +82,7 @@ export default function ManagersPage() {
         <Button 
           variant="outline" 
           size="icon"
-          className="h-8 w-8 rounded-full"
+          className="h-8 w-8 rounded-full cursor-pointer"
           onClick={() => setCurrentPage(prev => Math.max(prev - 1, 1))}
           disabled={currentPage === 1}
         >
@@ -107,7 +107,7 @@ export default function ManagersPage() {
             <Button
               key={pageNum}
               variant={currentPage === pageNum ? "default" : "outline"}
-              className={`h-8 w-8 rounded-full ${currentPage === pageNum ? 'bg-blue-500 hover:bg-blue-600' : ''}`}
+              className={`h-8 w-8 rounded-full cursor-pointer ${currentPage === pageNum ? 'bg-blue-500 hover:bg-blue-600' : ''}`}
               onClick={() => setCurrentPage(pageNum)}
             >
               {pageNum}
@@ -118,7 +118,7 @@ export default function ManagersPage() {
         <Button 
           variant="outline" 
           size="icon"
-          className="h-8 w-8 rounded-full"
+          className="h-8 w-8 rounded-full cursor-pointer"
           onClick={() => setCurrentPage(prev => Math.min(prev + 1, totalPages))}
           disabled={currentPage === totalPages}
         >

@@ -131,7 +131,7 @@ export default function CreateManagerPage() {
       <div className="flex justify-between items-center mb-8">
         <div className="flex items-center gap-2">
           <Link href="/managers">
-            <Button variant="outline" size="icon" className="h-8 w-8 rounded-full">
+            <Button variant="outline" size="icon" className="h-8 w-8 rounded-full cursor-pointer">
               <ArrowLeft size={16} />
             </Button>
           </Link>
@@ -139,7 +139,7 @@ export default function CreateManagerPage() {
         </div>
         <Button 
           onClick={handleSubmit} 
-          className="flex items-center gap-2 bg-blue-500 hover:bg-blue-600"
+          className="flex items-center gap-2 bg-blue-500 hover:bg-blue-600 cursor-pointer"
           disabled={saving}
         >
           <Save size={16} />
@@ -439,11 +439,11 @@ export default function CreateManagerPage() {
         {/* 하단 버튼 */}
         <div className="p-6 bg-gray-50 flex justify-end gap-4">
           <Link href="/managers">
-            <Button variant="outline">취소</Button>
+            <Button variant="outline" className="cursor-pointer">취소</Button>
           </Link>
           <Button 
             onClick={handleSubmit} 
-            className="bg-blue-500 hover:bg-blue-600"
+            className="bg-blue-500 hover:bg-blue-600 cursor-pointer"
             disabled={saving}
           >
             {saving ? '저장 중...' : '관리자 등록'}

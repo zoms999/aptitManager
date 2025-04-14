@@ -150,18 +150,45 @@ export async function DELETE(
     }
     
     // 삭제 쿼리 실행
-    const deleteQuery = `DELETE FROM mwd_manager WHERE mg_seq = ${id}`;
-    await db.$executeRaw(Prisma.sql([deleteQuery]));
+    try {
+      const deleteQuery = `DELETE FROM mwd_manager WHERE mg_seq = ${id}`;
+      await db.$executeRaw(Prisma.sql([deleteQuery]));
+      
+      return NextResponse.json({
+        success: true,
+        message: '관리자가 성공적으로 삭제되었습니다.'
+      });
+    } catch (deleteError: Error | Prisma.PrismaClientKnownRequestError | unknown) {
+      console.error('DB 삭제 쿼리 실행 오류:', deleteError);
+      
+      // 외래 키 제약 조건 위반 에러를 확인
+      if (
+        deleteError instanceof Prisma.PrismaClientKnownRequestError && 
+        deleteError.code === 'P2003'
+      ) {
+        return NextResponse.json({
+          success: false, 
+          message: '이 관리자는 다른 데이터와 연결되어 있어 삭제할 수 없습니다. 먼저 연결된 데이터를 삭제해주세요.',
+          error: deleteError.message
+        }, { status: 409 }); // 409 Conflict
+      }
+      
+      const errorMessage = deleteError instanceof Error ? deleteError.message : '알 수 없는 오류';
+      
+      return NextResponse.json({
+        success: false, 
+        message: '관리자 삭제 중 데이터베이스 오류가 발생했습니다.',
+        error: errorMessage
+      }, { status: 500 });
+    }
+  } catch (error: Error | unknown) {
+    console.error('매니저 삭제 오류:', error);
+    const errorMessage = error instanceof Error ? error.message : '알 수 없는 오류';
     
     return NextResponse.json({
-      success: true,
-      message: '관리자가 성공적으로 삭제되었습니다.'
-    });
-  } catch (error) {
-    console.error('매니저 삭제 오류:', error);
-    return NextResponse.json(
-      { success: false, message: '매니저를 삭제하는 중 오류가 발생했습니다.' },
-      { status: 500 }
-    );
+      success: false, 
+      message: '매니저를 삭제하는 중 오류가 발생했습니다.',
+      error: errorMessage
+    }, { status: 500 });
   }
 } 

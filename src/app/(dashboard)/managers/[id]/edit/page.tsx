@@ -58,9 +58,10 @@ export default function EditManagerPage({ params }: EditManagerPageProps) {
       
       if (data.success) {
         setManager(data.manager);
-        // 비밀번호를 제외하고 폼 데이터 초기화
-        const { mg_pw, ...managerWithoutPw } = data.manager;
-        setFormData(managerWithoutPw);
+        // 비밀번호를 제외한 객체 생성
+        const managerData = { ...data.manager };
+        delete managerData.mg_pw;
+        setFormData(managerData);
       } else {
         setError(data.message || '매니저 정보를 불러올 수 없습니다.');
       }
@@ -123,15 +124,17 @@ export default function EditManagerPage({ params }: EditManagerPageProps) {
       
       if (data.success) {
         setMessage('관리자 정보가 성공적으로 수정되었습니다.');
+        
         // 폼 데이터 갱신
         setManager(data.manager);
-        const { mg_pw, ...managerWithoutPw } = data.manager;
-        setFormData(managerWithoutPw);
+        const managerData = { ...data.manager };
+        delete managerData.mg_pw;
+        setFormData(managerData);
         
-        // 3초 후 메시지 숨김
+        // 1초 후 이전 페이지로 이동
         setTimeout(() => {
-          setMessage(null);
-        }, 3000);
+          router.push(`/managers/${id}`);
+        }, 1000);
       } else {
         setError(data.message || '관리자 정보 수정에 실패했습니다.');
       }
@@ -215,7 +218,7 @@ export default function EditManagerPage({ params }: EditManagerPageProps) {
       <div className="flex justify-between items-center mb-8">
         <div className="flex items-center gap-2">
           <Link href={`/managers/${id}`}>
-            <Button variant="outline" size="icon" className="h-8 w-8 rounded-full">
+            <Button variant="outline" size="icon" className="h-8 w-8 rounded-full cursor-pointer">
               <ArrowLeft size={16} />
             </Button>
           </Link>
@@ -225,7 +228,7 @@ export default function EditManagerPage({ params }: EditManagerPageProps) {
           <Button 
             onClick={handleDelete} 
             variant="outline" 
-            className="flex items-center gap-2 text-red-500 hover:text-red-600"
+            className="flex items-center gap-2 text-red-500 hover:text-red-600 cursor-pointer"
             disabled={deleting}
           >
             <Trash2 size={16} />
@@ -233,7 +236,7 @@ export default function EditManagerPage({ params }: EditManagerPageProps) {
           </Button>
           <Button 
             onClick={handleSubmit} 
-            className="flex items-center gap-2 bg-blue-500 hover:bg-blue-600"
+            className="flex items-center gap-2 bg-blue-500 hover:bg-blue-600 cursor-pointer"
             disabled={saving}
           >
             <Save size={16} />
@@ -544,11 +547,11 @@ export default function EditManagerPage({ params }: EditManagerPageProps) {
         {/* 하단 버튼 */}
         <div className="p-6 bg-gray-50 flex justify-end gap-4">
           <Link href={`/managers/${id}`}>
-            <Button variant="outline">취소</Button>
+            <Button variant="outline" className="cursor-pointer">취소</Button>
           </Link>
           <Button 
             onClick={handleSubmit} 
-            className="bg-blue-500 hover:bg-blue-600"
+            className="bg-blue-500 hover:bg-blue-600 cursor-pointer"
             disabled={saving}
           >
             {saving ? '저장 중...' : '변경사항 저장'}
