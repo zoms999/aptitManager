@@ -84,7 +84,7 @@ const navItems: NavItem[] = [
       },
       { 
         title: "개인용", 
-        href: "/results/individuals-result",
+        href: "/individuals-result",
         icon: <User className="h-3.5 w-3.5" />,
       }
     ]
