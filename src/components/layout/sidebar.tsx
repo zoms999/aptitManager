@@ -79,12 +79,12 @@ const navItems: NavItem[] = [
     submenuItems: [
       { 
         title: "기관용", 
-        href: "/results/institutions",
+        href: "/institute-result",
         icon: <Building className="h-3.5 w-3.5" />,
       },
       { 
         title: "개인용", 
-        href: "/results/individuals",
+        href: "/results/individuals-result",
         icon: <User className="h-3.5 w-3.5" />,
       }
     ]
