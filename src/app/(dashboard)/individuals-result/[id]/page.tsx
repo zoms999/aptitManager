@@ -7,7 +7,7 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/com
 import { Button } from "@/components/ui/button";
 import { Separator } from "@/components/ui/separator";
 import { Skeleton } from "@/components/ui/skeleton";
-import { ArrowLeft, User, Brain, PieChart, Lightbulb, Briefcase, GraduationCap, BookOpen, School, CheckSquare, Heart, ChevronDown, ChevronUp } from 'lucide-react';
+import { ArrowLeft, User, Brain, PieChart, Lightbulb, Briefcase, GraduationCap, BookOpen, School, CheckSquare, Heart, ChevronDown, ChevronUp, FileText } from 'lucide-react';
 import { Badge } from '@/components/ui/badge';
 
 interface PersonalInfo {
@@ -162,6 +162,7 @@ export default function IndividualResultPage({ params }: { params: { id: string 
   const [error, setError] = useState<string | null>(null);
   const [expandedTop, setExpandedTop] = useState<number[]>([]);
   const [expandedBottom, setExpandedBottom] = useState<number[]>([]);
+  const [pdfLoading, setPdfLoading] = useState(false);
   
   useEffect(() => {
     const fetchData = async () => {
@@ -241,6 +242,63 @@ export default function IndividualResultPage({ params }: { params: { id: string 
     return scores;
   };
   
+  // 보고서 다운로드 함수
+  const handlePdfDownload = async () => {
+    if (!data) return;
+    
+    try {
+      setPdfLoading(true);
+      
+      // API 호출하여 HTML 보고서 생성 요청
+      const response = await fetch(`/api/individuals-result/${id}/pdf`, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+          // 필요한 데이터 선택
+          sections: ['tendency', 'analysis', 'suitable-job', 'preference'],
+          data: {
+            personalInfo: data.personalInfo,
+            tendency: data.tendency,
+            topTendencies: data.topTendencies,
+            bottomTendencies: data.bottomTendencies,
+            topTendencyExplains: data.topTendencyExplains,
+            bottomTendencyExplains: data.bottomTendencyExplains,
+            tendencyQuestionExplains: data.tendencyQuestionExplains,
+            suitableJobsSummary: data.suitableJobsSummary,
+            suitableJobsDetail: data.suitableJobsDetail,
+            suitableJobMajors: data.suitableJobMajors,
+            imagePreference: data.imagePreference,
+            preferenceData: data.preferenceData
+          }
+        }),
+      });
+      
+      if (!response.ok) {
+        const errorData = await response.json();
+        throw new Error(errorData?.message || '보고서 생성 중 오류가 발생했습니다.');
+      }
+      
+      // HTML을 받아와서 새 창에 표시
+      const htmlContent = await response.text();
+      const newWindow = window.open('', '_blank');
+      if (newWindow) {
+        newWindow.document.write(htmlContent);
+        newWindow.document.close();
+      } else {
+        // 팝업이 차단된 경우
+        alert('팝업이 차단되었습니다. 팝업 차단을 해제한 후 다시 시도해주세요.');
+      }
+      
+    } catch (err) {
+      console.error('보고서 다운로드 중 오류:', err);
+      alert(err instanceof Error ? err.message : '보고서 생성 중 오류가 발생했습니다.');
+    } finally {
+      setPdfLoading(false);
+    }
+  };
+  
   return (
     <div className="container mx-auto py-8 px-6 max-w-7xl">
       <div className="mb-6">
@@ -266,6 +324,27 @@ export default function IndividualResultPage({ params }: { params: { id: string 
             <p className="text-gray-500 mt-1">검사결과 상세 정보</p>
           </div>
         </div>
+        
+        {/* PDF 다운로드 버튼 추가 */}
+        {!loading && data && (
+          <Button 
+            onClick={handlePdfDownload} 
+            className="bg-blue-700 hover:bg-blue-800 text-white"
+            disabled={pdfLoading}
+          >
+            {pdfLoading ? (
+              <>
+                <div className="mr-2 h-4 w-4 animate-spin rounded-full border-2 border-white border-t-transparent"></div>
+                <span>보고서 생성 중...</span>
+              </>
+            ) : (
+              <>
+                <FileText className="mr-2 h-4 w-4" />
+                <span>결과 보고서 보기</span>
+              </>
+            )}
+          </Button>
+        )}
       </div>
       
       <Tabs defaultValue="personal" className="w-full">
