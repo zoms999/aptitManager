@@ -110,7 +110,7 @@ export default function IndividualsResultPage() {
 
   // 결과 상세 페이지로 이동
   const handleResultClick = (anpSeq: number) => {
-    router.push(`/personal-result/${anpSeq}`);
+    router.push(`/individuals-result/${anpSeq}`);
   };
 
   // 총 페이지 수 계산
