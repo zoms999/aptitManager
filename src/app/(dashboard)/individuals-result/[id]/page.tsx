@@ -41,6 +41,7 @@ interface PersonalInfo {
   age: number;
   pe_job_name: string;
   pe_job_detail: string;
+  pd_kind?: string;
 }
 
 interface Tendency {
@@ -371,6 +372,40 @@ export default function IndividualResultPage({ params }: { params: { id: string 
     }
   };
   
+  // 추가: pd_kind 값에 따라 보여줄 탭 설정
+  const isPremium = (): boolean => {
+    if (!data?.personalInfo.pd_kind) return false;
+    return data.personalInfo.pd_kind === 'premium1' || data.personalInfo.pd_kind === 'premium2';
+  };
+  
+  // 추가: 탭 목록 배열
+  const basicTabs = [
+    { id: "personal", label: "개인정보", icon: User },
+    { id: "tendency", label: "성향진단", icon: Brain },
+    { id: "analysis", label: "성향분석", icon: PieChart },
+    { id: "suitable-job", label: "성향적합직업학과", icon: Briefcase },
+    { id: "preference", label: "선호도", icon: Heart }
+  ];
+  
+  const premiumTabs = [
+    { id: "personal", label: "개인정보", icon: User },
+    { id: "tendency", label: "성향진단", icon: Brain },
+    { id: "analysis", label: "성향분석", icon: PieChart },
+    { id: "thinking", label: "사고력", icon: Lightbulb },
+    { id: "suitable-job", label: "성향적합직업학과", icon: Briefcase },
+    { id: "competency", label: "역량진단", icon: CheckSquare },
+    { id: "competency-job", label: "역량적합직업", icon: GraduationCap },
+    { id: "learning", label: "학습", icon: BookOpen },
+    { id: "subjects", label: "교과목", icon: School },
+    { id: "job", label: "직무", icon: Briefcase },
+    { id: "preference", label: "선호도", icon: Heart }
+  ];
+  
+  // 현재 pd_kind 값에 맞는 탭 목록 선택
+  const getVisibleTabs = () => {
+    return isPremium() ? premiumTabs : basicTabs;
+  };
+  
   return (
     <div className="container mx-auto py-8 px-6 max-w-7xl">
       <div className="mb-6">
@@ -421,50 +456,12 @@ export default function IndividualResultPage({ params }: { params: { id: string 
       
       <Tabs defaultValue="personal" className="w-full">
         <TabsList className="grid grid-cols-3 md:grid-cols-6 lg:grid-cols-11 mb-8">
-          <TabsTrigger value="personal" className="flex items-center gap-1">
-            <User className="h-4 w-4" />
-            <span>개인정보</span>
-          </TabsTrigger>
-          <TabsTrigger value="tendency" className="flex items-center gap-1">
-            <Brain className="h-4 w-4" />
-            <span>성향진단</span>
-          </TabsTrigger>
-          <TabsTrigger value="analysis" className="flex items-center gap-1">
-            <PieChart className="h-4 w-4" />
-            <span>성향분석</span>
-          </TabsTrigger>
-          <TabsTrigger value="thinking" className="flex items-center gap-1">
-            <Lightbulb className="h-4 w-4" />
-            <span>사고력</span>
-          </TabsTrigger>
-          <TabsTrigger value="suitable-job" className="flex items-center gap-1">
-            <Briefcase className="h-4 w-4" />
-            <span>성향적합직업학과</span>
-          </TabsTrigger>
-          <TabsTrigger value="competency" className="flex items-center gap-1">
-            <CheckSquare className="h-4 w-4" />
-            <span>역량진단</span>
-          </TabsTrigger>
-          <TabsTrigger value="competency-job" className="flex items-center gap-1">
-            <GraduationCap className="h-4 w-4" />
-            <span>역량적합직업</span>
-          </TabsTrigger>
-          <TabsTrigger value="learning" className="flex items-center gap-1">
-            <BookOpen className="h-4 w-4" />
-            <span>학습</span>
-          </TabsTrigger>
-          <TabsTrigger value="subjects" className="flex items-center gap-1">
-            <School className="h-4 w-4" />
-            <span>교과목</span>
-          </TabsTrigger>
-          <TabsTrigger value="job" className="flex items-center gap-1">
-            <Briefcase className="h-4 w-4" />
-            <span>직무</span>
-          </TabsTrigger>
-          <TabsTrigger value="preference" className="flex items-center gap-1">
-            <Heart className="h-4 w-4" />
-            <span>선호도</span>
-          </TabsTrigger>
+          {getVisibleTabs().map(tab => (
+            <TabsTrigger key={tab.id} value={tab.id} className="flex items-center gap-1">
+              {tab.icon && <tab.icon className="h-4 w-4" />}
+              <span>{tab.label}</span>
+            </TabsTrigger>
+          ))}
         </TabsList>
         
         {/* 개인정보 탭 */}
@@ -833,7 +830,7 @@ export default function IndividualResultPage({ params }: { params: { id: string 
           )}
         </TabsContent>
         
-        {/* 사고력 탭 */}
+        {/* 사고력 탭 - premium 전용 */}
         <TabsContent value="thinking">
           {loading ? (
             <div className="grid grid-cols-1 gap-6">

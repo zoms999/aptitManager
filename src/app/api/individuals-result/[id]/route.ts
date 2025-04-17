@@ -17,6 +17,7 @@ interface PersonalInfo {
   age: number;
   pe_job_name: string;
   pe_job_detail: string;
+  pd_kind?: string;
 }
 
 interface Tendency {
@@ -101,24 +102,39 @@ export async function GET(
   try {
     // 개인 기본 정보 조회
     const personalInfoQuery = `
-      select ac.ac_id as id, pe.pe_name as pname,
-      pe.pe_birth_year||'-'||pe.pe_birth_month||'-'||pe.pe_birth_day as birth,
-      case when pe.pe_sex = 'M' then '남' else '여' end sex,
-      pe.pe_cellphone as cellphone,
-      pe.pe_contact as contact,
-      pe.pe_email as email,
-      coalesce(ec.ename,'') as education,
-      pe.pe_school_name as school,
-      pe.pe_school_year as syear,
-      pe.pe_school_major as smajor,
-      coalesce(jc.jname,'') as job,
-      cast(extract(year from age(cast(lpad(cast(pe_birth_year as text),4,'0')||lpad(cast(pe_birth_month as text),2,'0')||lpad(cast(pe_birth_day as text),2,'0') as date))) as int) as age,
-      pe.pe_job_name,
-      pe.pe_job_detail
-      from mwd_answer_progress ap, mwd_account ac, mwd_person pe
-      left outer join (select coc_code ecode, coc_code_name ename from mwd_common_code where coc_group = 'UREDU') ec on pe.pe_ur_education = ec.ecode
-      left outer join (select coc_code jcode, coc_code_name jname from mwd_common_code where coc_group = 'URJOB') jc on pe.pe_ur_job = jc.jcode
-      where ap.anp_seq = ${id} and ac.ac_gid = ap.ac_gid and pe.pe_seq = ac.pe_seq
+      SELECT 
+        ac.ac_id AS id,
+        pe.pe_name AS pname,
+        pe.pe_birth_year||'-'||pe.pe_birth_month||'-'||pe.pe_birth_day AS birth,
+        CASE WHEN pe.pe_sex = 'M' THEN '남' ELSE '여' END AS sex,
+        pe.pe_cellphone AS cellphone,
+        pe.pe_contact AS contact,
+        pe.pe_email AS email,
+        COALESCE(ec.ename, '') AS education,
+        pe.pe_school_name AS school,
+        pe.pe_school_year AS syear,
+        pe.pe_school_major AS smajor,
+        COALESCE(jc.jname, '') AS job,
+        CAST(EXTRACT(YEAR FROM AGE(TO_DATE(
+          LPAD(pe.pe_birth_year::TEXT,4,'0')||
+          LPAD(pe.pe_birth_month::TEXT,2,'0')||
+          LPAD(pe.pe_birth_day::TEXT,2,'0'), 'YYYYMMDD'))) AS INT) AS age,
+        pe.pe_job_name,
+        pe.pe_job_detail,
+        cr.pd_kind
+      FROM 
+        mwd_answer_progress ap
+      INNER JOIN mwd_account ac ON ac.ac_gid = ap.ac_gid
+      INNER JOIN mwd_person pe ON pe.pe_seq = ac.pe_seq
+      INNER JOIN mwd_choice_result cr ON ap.cr_seq = cr.cr_seq
+      LEFT JOIN (
+        SELECT coc_code AS ecode, coc_code_name AS ename FROM mwd_common_code WHERE coc_group = 'UREDU'
+      ) ec ON pe.pe_ur_education = ec.ecode
+      LEFT JOIN (
+        SELECT coc_code AS jcode, coc_code_name AS jname FROM mwd_common_code WHERE coc_group = 'URJOB'
+      ) jc ON pe.pe_ur_job = jc.jcode
+      WHERE 
+        ap.anp_seq = ${id}
     `;
     
     // 성향 정보 조회
