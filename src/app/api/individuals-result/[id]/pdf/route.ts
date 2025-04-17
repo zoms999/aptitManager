@@ -1,6 +1,5 @@
-import { NextRequest, NextResponse } from 'next/server';
+import { NextRequest } from 'next/server';
 import puppeteer from 'puppeteer';
-import chrome from 'chrome-aws-lambda';
 
 // PDF 생성 API에 사용할 타입 정의
 interface PdfRequestData {
@@ -136,9 +135,7 @@ export async function POST(
     
     // 문서 생성
     const browser = await puppeteer.launch({
-      headless: 'new',
-      args: chrome.args,
-      executablePath: await chrome.executablePath,
+      headless: true,
     });
     
     const page = await browser.newPage();
@@ -155,7 +152,7 @@ export async function POST(
     return new Response(pdfBuffer, {
       headers: {
         'Content-Type': 'application/pdf',
-        'Content-Disposition': `attachment; filename="${data.personalInfo.pname}_검사결과.pdf"`,
+        'Content-Disposition': `attachment; filename="${encodeURIComponent(data.personalInfo.pname)}_report.pdf"; filename*=UTF-8''${encodeURIComponent(`${data.personalInfo.pname}_검사결과.pdf`)}`,
       },
     });
   } catch (error) {

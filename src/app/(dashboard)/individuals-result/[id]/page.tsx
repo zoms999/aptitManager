@@ -41,7 +41,6 @@ interface PersonalInfo {
   age: number;
   pe_job_name: string;
   pe_job_detail: string;
-  pd_kind?: string;
 }
 
 interface Tendency {
@@ -322,7 +321,7 @@ export default function IndividualResultPage({ params }: { params: { id: string 
     try {
       setPdfLoading(true);
       
-      // API 호출하여 HTML 보고서 생성 요청
+      // API 호출하여 PDF 보고서 생성 요청
       const response = await fetch(`/api/individuals-result/${id}/pdf`, {
         method: 'POST',
         headers: {
@@ -343,26 +342,41 @@ export default function IndividualResultPage({ params }: { params: { id: string 
             suitableJobsDetail: data.suitableJobsDetail,
             suitableJobMajors: data.suitableJobMajors,
             imagePreference: data.imagePreference,
-            preferenceData: data.preferenceData
+            preferenceData: data.preferenceData,
+            thinkingMain: data.thinkingMain,
+            thinkingScore: data.thinkingScore,
+            thinkingDetails: data.thinkingDetails
           }
         }),
       });
       
       if (!response.ok) {
-        const errorData = await response.json();
-        throw new Error(errorData?.message || '보고서 생성 중 오류가 발생했습니다.');
+        // 서버 에러 응답 처리
+        try {
+          const errorData = await response.json();
+          throw new Error(errorData?.error || errorData?.message || '보고서 생성 중 오류가 발생했습니다.');
+        } catch {
+          // JSON이 아닌 경우 상태 코드와 함께 에러 표시
+          throw new Error(`보고서 생성 중 오류가 발생했습니다. (${response.status})`);
+        }
       }
       
-      // HTML을 받아와서 새 창에 표시
-      const htmlContent = await response.text();
-      const newWindow = window.open('', '_blank');
-      if (newWindow) {
-        newWindow.document.write(htmlContent);
-        newWindow.document.close();
-      } else {
-        // 팝업이 차단된 경우
-        alert('팝업이 차단되었습니다. 팝업 차단을 해제한 후 다시 시도해주세요.');
-      }
+      // 바이너리 PDF 데이터를 Blob으로 변환
+      const blob = await response.blob();
+      
+      // Blob URL 생성
+      const url = window.URL.createObjectURL(blob);
+      
+      // 다운로드 링크 생성 및 클릭
+      const a = document.createElement('a');
+      a.href = url;
+      a.download = `${data.personalInfo.pname}_검사결과.pdf`;
+      document.body.appendChild(a);
+      a.click();
+      
+      // 메모리 해제
+      window.URL.revokeObjectURL(url);
+      document.body.removeChild(a);
       
     } catch (err) {
       console.error('보고서 다운로드 중 오류:', err);
@@ -370,40 +384,6 @@ export default function IndividualResultPage({ params }: { params: { id: string 
     } finally {
       setPdfLoading(false);
     }
-  };
-  
-  // 추가: pd_kind 값에 따라 보여줄 탭 설정
-  const isPremium = (): boolean => {
-    if (!data?.personalInfo.pd_kind) return false;
-    return data.personalInfo.pd_kind === 'premium1' || data.personalInfo.pd_kind === 'premium2';
-  };
-  
-  // 추가: 탭 목록 배열
-  const basicTabs = [
-    { id: "personal", label: "개인정보", icon: User },
-    { id: "tendency", label: "성향진단", icon: Brain },
-    { id: "analysis", label: "성향분석", icon: PieChart },
-    { id: "suitable-job", label: "성향적합직업학과", icon: Briefcase },
-    { id: "preference", label: "선호도", icon: Heart }
-  ];
-  
-  const premiumTabs = [
-    { id: "personal", label: "개인정보", icon: User },
-    { id: "tendency", label: "성향진단", icon: Brain },
-    { id: "analysis", label: "성향분석", icon: PieChart },
-    { id: "thinking", label: "사고력", icon: Lightbulb },
-    { id: "suitable-job", label: "성향적합직업학과", icon: Briefcase },
-    { id: "competency", label: "역량진단", icon: CheckSquare },
-    { id: "competency-job", label: "역량적합직업", icon: GraduationCap },
-    { id: "learning", label: "학습", icon: BookOpen },
-    { id: "subjects", label: "교과목", icon: School },
-    { id: "job", label: "직무", icon: Briefcase },
-    { id: "preference", label: "선호도", icon: Heart }
-  ];
-  
-  // 현재 pd_kind 값에 맞는 탭 목록 선택
-  const getVisibleTabs = () => {
-    return isPremium() ? premiumTabs : basicTabs;
   };
   
   return (
@@ -456,12 +436,50 @@ export default function IndividualResultPage({ params }: { params: { id: string 
       
       <Tabs defaultValue="personal" className="w-full">
         <TabsList className="grid grid-cols-3 md:grid-cols-6 lg:grid-cols-11 mb-8">
-          {getVisibleTabs().map(tab => (
-            <TabsTrigger key={tab.id} value={tab.id} className="flex items-center gap-1">
-              {tab.icon && <tab.icon className="h-4 w-4" />}
-              <span>{tab.label}</span>
-            </TabsTrigger>
-          ))}
+          <TabsTrigger value="personal" className="flex items-center gap-1">
+            <User className="h-4 w-4" />
+            <span>개인정보</span>
+          </TabsTrigger>
+          <TabsTrigger value="tendency" className="flex items-center gap-1">
+            <Brain className="h-4 w-4" />
+            <span>성향진단</span>
+          </TabsTrigger>
+          <TabsTrigger value="analysis" className="flex items-center gap-1">
+            <PieChart className="h-4 w-4" />
+            <span>성향분석</span>
+          </TabsTrigger>
+          <TabsTrigger value="thinking" className="flex items-center gap-1">
+            <Lightbulb className="h-4 w-4" />
+            <span>사고력</span>
+          </TabsTrigger>
+          <TabsTrigger value="suitable-job" className="flex items-center gap-1">
+            <Briefcase className="h-4 w-4" />
+            <span>성향적합직업학과</span>
+          </TabsTrigger>
+          <TabsTrigger value="competency" className="flex items-center gap-1">
+            <CheckSquare className="h-4 w-4" />
+            <span>역량진단</span>
+          </TabsTrigger>
+          <TabsTrigger value="competency-job" className="flex items-center gap-1">
+            <GraduationCap className="h-4 w-4" />
+            <span>역량적합직업</span>
+          </TabsTrigger>
+          <TabsTrigger value="learning" className="flex items-center gap-1">
+            <BookOpen className="h-4 w-4" />
+            <span>학습</span>
+          </TabsTrigger>
+          <TabsTrigger value="subjects" className="flex items-center gap-1">
+            <School className="h-4 w-4" />
+            <span>교과목</span>
+          </TabsTrigger>
+          <TabsTrigger value="job" className="flex items-center gap-1">
+            <Briefcase className="h-4 w-4" />
+            <span>직무</span>
+          </TabsTrigger>
+          <TabsTrigger value="preference" className="flex items-center gap-1">
+            <Heart className="h-4 w-4" />
+            <span>선호도</span>
+          </TabsTrigger>
         </TabsList>
         
         {/* 개인정보 탭 */}
@@ -830,7 +848,7 @@ export default function IndividualResultPage({ params }: { params: { id: string 
           )}
         </TabsContent>
         
-        {/* 사고력 탭 - premium 전용 */}
+        {/* 사고력 탭 */}
         <TabsContent value="thinking">
           {loading ? (
             <div className="grid grid-cols-1 gap-6">
