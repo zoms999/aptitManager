@@ -9,6 +9,21 @@ import { Separator } from "@/components/ui/separator";
 import { Skeleton } from "@/components/ui/skeleton";
 import { ArrowLeft, User, Brain, PieChart, Lightbulb, Briefcase, GraduationCap, BookOpen, School, CheckSquare, Heart, ChevronDown, ChevronUp, FileText } from 'lucide-react';
 import { Badge } from '@/components/ui/badge';
+import { 
+  ResponsiveContainer, 
+  BarChart, 
+  Bar, 
+  XAxis, 
+  YAxis, 
+  CartesianGrid, 
+  Tooltip, 
+  Legend, 
+  RadarChart,
+  PolarGrid,
+  PolarAngleAxis,
+  PolarRadiusAxis,
+  Radar
+} from 'recharts';
 
 interface PersonalInfo {
   id: string;
@@ -141,18 +156,6 @@ interface ResultData {
   preferenceJobs3?: PreferenceJob[];
 }
 
-// 사고력 영역별 이름 정의
-const thinkingNames = {
-  thk1: "사실형사고력",
-  thk2: "추론형사고력",
-  thk3: "공감형사고력",
-  thk4: "직관형사고력",
-  thk5: "창의형사고력",
-  thk6: "융합형사고력",
-  thk7: "응용형사고력",
-  thk8: "종합형사고력"
-};
-
 export default function IndividualResultPage({ params }: { params: { id: string } }) {
   const router = useRouter();
   const { id } = params;
@@ -228,18 +231,87 @@ export default function IndividualResultPage({ params }: { params: { id: string 
   const getThinkingScoreArray = () => {
     if (!data?.thinkingScore) return [];
     
+    // 이름과 점수로 사고력 데이터 정렬
     const scores = [
-      { name: thinkingNames.thk1, score: data.thinkingScore.thk1 || 0 },
-      { name: thinkingNames.thk2, score: data.thinkingScore.thk2 || 0 },
-      { name: thinkingNames.thk3, score: data.thinkingScore.thk3 || 0 },
-      { name: thinkingNames.thk4, score: data.thinkingScore.thk4 || 0 },
-      { name: thinkingNames.thk5, score: data.thinkingScore.thk5 || 0 },
-      { name: thinkingNames.thk6, score: data.thinkingScore.thk6 || 0 },
-      { name: thinkingNames.thk7, score: data.thinkingScore.thk7 || 0 },
-      { name: thinkingNames.thk8, score: data.thinkingScore.thk8 || 0 }
+      { name: '사실적사고력', score: data.thinkingScore.thk1 || 0 },
+      { name: '추론적사고력', score: data.thinkingScore.thk2 || 0 },
+      { name: '고정적사고력', score: data.thinkingScore.thk3 || 0 },
+      { name: '창의적사고력', score: data.thinkingScore.thk4 || 0 },
+      { name: '분석적사고력', score: data.thinkingScore.thk5 || 0 },
+      { name: '융합적사고력', score: data.thinkingScore.thk6 || 0 },
+      { name: '수직적사고력', score: data.thinkingScore.thk7 || 0 },
+      { name: '수평적사고력', score: data.thinkingScore.thk8 || 0 }
     ];
     
     return scores;
+  };
+  
+  // 레이더 차트 데이터 생성 함수 추가
+  const getRadarChartData = () => {
+    if (!data?.thinkingScore) return [];
+    
+    return [
+      { 
+        subject: '수직적', 
+        score: data.thinkingScore.thk7 || 0,
+        fullMark: 100 
+      },
+      { 
+        subject: '추론적', 
+        score: data.thinkingScore.thk2 || 0,
+        fullMark: 100 
+      },
+      { 
+        subject: '융합적', 
+        score: data.thinkingScore.thk6 || 0, 
+        fullMark: 100 
+      },
+      { 
+        subject: '고정적', 
+        score: data.thinkingScore.thk3 || 0, 
+        fullMark: 100 
+      },
+      { 
+        subject: '사실적', 
+        score: data.thinkingScore.thk1 || 0, 
+        fullMark: 100 
+      },
+      { 
+        subject: '분석적', 
+        score: data.thinkingScore.thk5 || 0, 
+        fullMark: 100 
+      },
+      { 
+        subject: '수평적', 
+        score: data.thinkingScore.thk8 || 0, 
+        fullMark: 100 
+      },
+      { 
+        subject: '창의적', 
+        score: data.thinkingScore.thk4 || 0, 
+        fullMark: 100 
+      }
+    ];
+  };
+
+  // 선호도 차트 데이터 생성 함수 추가
+  const getPreferenceBarData = () => {
+    if (!data?.preferenceData) return [];
+    
+    return [
+      {
+        name: data.preferenceData.tdname1,
+        선호도: data.preferenceData.rrate1
+      },
+      {
+        name: data.preferenceData.tdname2,
+        선호도: data.preferenceData.rrate2
+      },
+      {
+        name: data.preferenceData.tdname3,
+        선호도: data.preferenceData.rrate3
+      }
+    ];
   };
   
   // 보고서 다운로드 함수
@@ -805,34 +877,48 @@ export default function IndividualResultPage({ params }: { params: { id: string 
                     {/* 바 차트 */}
                     <div>
                       <h3 className="text-lg font-medium mb-4 text-center">사고력 수직 막대 그래프</h3>
-                      <div className="h-80 w-full flex items-end justify-between p-4 bg-gray-50 rounded-lg">
-                        {getThinkingScoreArray().map((item, index) => (
-                          <div key={`bar-${index}`} className="flex flex-col items-center">
-                            <div 
-                              className="w-10 bg-rose-500 rounded-t-sm" 
-                              style={{ 
-                                height: `${Math.max(item.score, 5)}%`, 
-                                maxHeight: '100%',
-                                backgroundColor: `rgb(239, ${100 + (index * 20)}, 100)`
-                              }}
-                            ></div>
-                            <div className="mt-2 text-xs font-medium text-gray-700 transform -rotate-45 origin-top-left w-16 overflow-hidden whitespace-nowrap">
-                              {item.name.replace('사고력', '')}
-                            </div>
-                            <div className="mt-1 text-xs font-semibold">{item.score}%</div>
-                          </div>
-                        ))}
+                      <div className="h-80 w-full bg-gray-50 rounded-lg">
+                        <ResponsiveContainer width="100%" height="100%">
+                          <BarChart
+                            data={getThinkingScoreArray()}
+                            margin={{
+                              top: 20,
+                              right: 30,
+                              left: 20,
+                              bottom: 20,
+                            }}
+                          >
+                            <CartesianGrid strokeDasharray="3 3" />
+                            <XAxis dataKey="name" tick={{ fontSize: 10 }} tickFormatter={(value: string) => value.replace('사고력', '')} />
+                            <YAxis domain={[0, 100]} />
+                            <Tooltip formatter={(value: number) => [`${value}%`, '점수']} />
+                            <Legend />
+                            <Bar 
+                              dataKey="score" 
+                              name="사고력 점수" 
+                              fill="#8884d8" 
+                              label={{ position: 'top', formatter: (value: number) => `${value}%` }}
+                            />
+                          </BarChart>
+                        </ResponsiveContainer>
                       </div>
                     </div>
                     
-                    {/* 레이더 차트 (간략화) */}
+                    {/* 레이더 차트 */}
                     <div>
                       <h3 className="text-lg font-medium mb-4 text-center">사고력 분포 그래프</h3>
-                      <div className="relative h-80 w-full bg-gray-50 rounded-lg p-4 flex items-center justify-center">
-                        <div className="text-center text-gray-500">
-                          <p>사고력 분포 레이더 차트</p>
-                          <p className="text-sm mt-2">이미지 참조</p>
-                        </div>
+                      <div className="h-80 w-full bg-gray-50 rounded-lg p-4">
+                        <ResponsiveContainer width="100%" height="100%">
+                          <RadarChart cx="50%" cy="50%" outerRadius="80%" data={getRadarChartData()}>
+                            <PolarGrid />
+                            <PolarAngleAxis dataKey="subject" />
+                            <PolarRadiusAxis angle={30} domain={[0, 100]} />
+                            <Radar name="사고력 점수" dataKey="score" stroke="#8884d8" 
+                              fill="#8884d8" fillOpacity={0.6} />
+                            <Tooltip />
+                            <Legend />
+                          </RadarChart>
+                        </ResponsiveContainer>
                       </div>
                     </div>
                   </div>
@@ -1033,44 +1119,31 @@ export default function IndividualResultPage({ params }: { params: { id: string 
                     </CardTitle>
                   </CardHeader>
                   <CardContent className="pt-6">
-                    <div className="relative mx-auto max-w-md">
-                      <div className="border border-gray-200 rounded-lg bg-white p-6">
-                        <div className="mb-4">
-                          <div className="h-44 flex items-center justify-center">
-                            <div className="w-full max-w-xs bg-gray-100 rounded-lg overflow-hidden">
-                              <div className="h-36 flex items-end">
-                                {/* 선호반응 막대 그래프 */}
-                                <div className="relative flex-1 h-full flex items-end p-2">
-                                  <div 
-                                    className="w-16 bg-rose-500 mx-auto rounded-t-md" 
-                                    style={{ height: `${(data.imagePreference.irate/100) * 100}%` }}>
-                                    <div className="absolute top-0 left-0 right-0 flex justify-center">
-                                      <span className="bg-rose-600 text-white px-2 py-1 rounded-md text-xs font-bold mt-2">
-                                        {Math.round(data.imagePreference.irate)}%
-                                      </span>
-                                    </div>
-                                  </div>
-                                </div>
-                              </div>
-                              
-                              {/* X축 라벨 */}
-                              <div className="bg-white p-2 text-center">
-                                <span className="text-sm font-medium text-gray-500">선호반응율(%)</span>
-                              </div>
-                            </div>
-                          </div>
-                          
-                          {/* 차트 레전드 및 데이터 표시 */}
-                          <div className="mt-6 text-center">
-                            <div className="inline-flex items-center justify-center bg-gray-50 px-4 py-2 rounded-lg">
-                              <div className="text-sm">
-                                <p className="text-gray-500">전체 이미지 중 <span className="font-bold text-rose-600">{data.imagePreference.cnt}개</span>의 이미지에 선호 반응을 보였습니다.</p>
-                                <p className="text-gray-500 mt-1">
-                                  (전체: {data.imagePreference.tcnt}개, 선호비율: {Math.round(data.imagePreference.irate)}%)
-                                </p>
-                              </div>
-                            </div>
-                          </div>
+                    <div className="h-[300px]">
+                      <ResponsiveContainer width="100%" height="100%">
+                        <BarChart 
+                          data={[{ name: '선호반응율', value: Math.round(data.imagePreference.irate) }]}
+                          layout="vertical"
+                          margin={{ top: 20, right: 30, left: 40, bottom: 20 }}
+                        >
+                          <CartesianGrid strokeDasharray="3 3" />
+                          <XAxis type="number" domain={[0, 100]} />
+                          <YAxis dataKey="name" type="category" width={100} />
+                          <Tooltip />
+                          <Legend />
+                          <Bar dataKey="value" name="선호반응율(%)" fill="#e11d48" />
+                        </BarChart>
+                      </ResponsiveContainer>
+                    </div>
+                    
+                    {/* 차트 레전드 및 데이터 표시 */}
+                    <div className="mt-6 text-center">
+                      <div className="inline-flex items-center justify-center bg-gray-50 px-4 py-2 rounded-lg">
+                        <div className="text-sm">
+                          <p className="text-gray-500">전체 이미지 중 <span className="font-bold text-rose-600">{data.imagePreference.cnt}개</span>의 이미지에 선호 반응을 보였습니다.</p>
+                          <p className="text-gray-500 mt-1">
+                            (전체: {data.imagePreference.tcnt}개, 선호비율: {Math.round(data.imagePreference.irate)}%)
+                          </p>
                         </div>
                       </div>
                     </div>
@@ -1089,43 +1162,26 @@ export default function IndividualResultPage({ params }: { params: { id: string 
                 <CardContent className="pt-6">
                   <div className="grid grid-cols-1 gap-6">
                     {/* 수평 바 차트 */}
-                    <div className="h-[200px] flex flex-col justify-center">
-                      <div className="flex items-center mb-6">
-                        <div className="w-32 text-right mr-4 font-medium text-sm">
-                          {data.preferenceData.tdname1}
-                        </div>
-                        <div className="flex-1 h-8 bg-gray-100 rounded-full overflow-hidden">
-                          <div 
-                            className="h-full bg-purple-600 rounded-full flex items-center justify-end pr-3" 
-                            style={{ width: `${data.preferenceData.rrate1}%` }}>
-                            <span className="text-white text-sm font-bold">{data.preferenceData.rrate1}%</span>
-                          </div>
-                        </div>
-                      </div>
-                      <div className="flex items-center mb-6">
-                        <div className="w-32 text-right mr-4 font-medium text-sm">
-                          {data.preferenceData.tdname2}
-                        </div>
-                        <div className="flex-1 h-8 bg-gray-100 rounded-full overflow-hidden">
-                          <div 
-                            className="h-full bg-purple-500 rounded-full flex items-center justify-end pr-3" 
-                            style={{ width: `${data.preferenceData.rrate2}%` }}>
-                            <span className="text-white text-sm font-bold">{data.preferenceData.rrate2}%</span>
-                          </div>
-                        </div>
-                      </div>
-                      <div className="flex items-center">
-                        <div className="w-32 text-right mr-4 font-medium text-sm">
-                          {data.preferenceData.tdname3}
-                        </div>
-                        <div className="flex-1 h-8 bg-gray-100 rounded-full overflow-hidden">
-                          <div 
-                            className="h-full bg-purple-400 rounded-full flex items-center justify-end pr-3" 
-                            style={{ width: `${data.preferenceData.rrate3}%` }}>
-                            <span className="text-white text-sm font-bold">{data.preferenceData.rrate3}%</span>
-                          </div>
-                        </div>
-                      </div>
+                    <div className="h-[300px]">
+                      <ResponsiveContainer width="100%" height="100%">
+                        <BarChart
+                          layout="vertical"
+                          data={getPreferenceBarData()}
+                          margin={{
+                            top: 20,
+                            right: 30,
+                            left: 40,
+                            bottom: 5,
+                          }}
+                        >
+                          <CartesianGrid strokeDasharray="3 3" />
+                          <XAxis type="number" domain={[0, 100]} />
+                          <YAxis dataKey="name" type="category" width={150} />
+                          <Tooltip />
+                          <Legend />
+                          <Bar dataKey="선호도" fill="#8884d8" name="선호도(%)" />
+                        </BarChart>
+                      </ResponsiveContainer>
                     </div>
                     
                     {/* 응답 문항수 비교 */}
@@ -1339,4 +1395,4 @@ export default function IndividualResultPage({ params }: { params: { id: string 
       </Tabs>
     </div>
   );
-} 
+}
