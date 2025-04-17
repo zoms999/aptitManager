@@ -1071,47 +1071,83 @@ export default function IndividualResultPage({ params }: { params: { id: string 
           ) : (
             <div className="grid grid-cols-1 gap-6">
               <div className="text-center">
-                <h2 className="text-2xl font-bold text-gray-800 mb-2">{data?.personalInfo.pname}님</h2>
-                <p className="text-lg font-medium mb-4">옥타그노시스 검사 결과에 따른 성향에 적합한 직업과 학과</p>
+                <h2 className="text-2xl font-bold text-gray-800 mb-2">{data?.personalInfo.pname}님!</h2>
+                <p className="text-lg font-medium mb-4">옥타그노시스 검사 결과에 따른 성향에 적합한 직업과 학과 입니다.</p>
               </div>
               
               <Card className="mb-2">
-                <CardContent className="p-6 bg-indigo-50">
+                <CardContent className="p-6 bg-gradient-to-r from-indigo-50 to-blue-50">
                   <p className="text-gray-700 text-center">성향과 적성을 분석하여 {data?.personalInfo.pname}님에게 가장 적합한 전공과 직업을 도출한 결과입니다.</p>
                 </CardContent>
               </Card>
               
               {/* 성향적합직업군 요약 */}
               <Card className="overflow-hidden border-none shadow-md hover:shadow-lg transition-all duration-300">
-                <CardHeader className="bg-gradient-to-r from-indigo-50 via-indigo-200 to-indigo-100 border-b border-indigo-100">
-                  <CardTitle className="text-xl text-indigo-800">성향적합직업군</CardTitle>
+                <CardHeader className="bg-gradient-to-r from-indigo-600 via-indigo-700 to-indigo-800 border-b border-indigo-100">
+                  <CardTitle className="text-xl text-white">{data?.suitableJobsSummary?.tendency} 적합직업군</CardTitle>
                 </CardHeader>
                 <CardContent className="pt-6 bg-white">
-                  {data?.suitableJobsSummary?.tendency && (
-                    <p className="text-gray-700 text-center">
-                      {data.suitableJobsSummary.tendency} 적합직업군
-                    </p>
-                  )}
+                  {data?.suitableJobsDetail && data.suitableJobsDetail.map((item, index) => (
+                    <div key={`job-${index}`} className="mb-8 last:mb-0 group">
+                      <div className="bg-gradient-to-r from-indigo-100 to-blue-100 rounded-t-lg p-4 flex items-center">
+                        <div className="bg-indigo-600 text-white rounded-full w-8 h-8 flex items-center justify-center mr-3 shadow-md">
+                          <span className="font-bold">{index + 1}</span>
+                        </div>
+                        <h3 className="text-lg font-bold text-indigo-900">추천{index + 1} {item.jo_name}</h3>
+                      </div>
+                      
+                      <div className="bg-white border-2 border-t-0 border-indigo-100 rounded-b-lg p-5 transition-all shadow-sm group-hover:shadow-md">
+                        <div className="grid grid-cols-1 md:grid-cols-2 gap-5">
+                          <div className="space-y-3">
+                            <h4 className="font-bold text-indigo-800 flex items-center">
+                              <div className="bg-indigo-100 p-1.5 rounded-full mr-2">
+                                <Briefcase className="h-4 w-4 text-indigo-600" />
+                              </div>
+                              직업개요
+                            </h4>
+                            <p className="text-gray-700 pl-8">{item.jo_outline}</p>
+                          </div>
+                          
+                          <div className="space-y-3">
+                            <h4 className="font-bold text-indigo-800 flex items-center">
+                              <div className="bg-indigo-100 p-1.5 rounded-full mr-2">
+                                <CheckSquare className="h-4 w-4 text-indigo-600" />
+                              </div>
+                              주요업무
+                            </h4>
+                            <p className="text-gray-700 pl-8 whitespace-pre-line">{item.jo_mainbusiness || '정보가 제공되지 않았습니다.'}</p>
+                          </div>
+                        </div>
+                      </div>
+                    </div>
+                  ))}
                 </CardContent>
               </Card>
               
               {/* 성향적합학과군 */}
               <Card className="overflow-hidden border-none shadow-md hover:shadow-lg transition-all duration-300">
-                <CardHeader className="bg-gradient-to-r from-indigo-50 to-indigo-600 border-b border-indigo-100">
-                  <CardTitle className="text-xl text-indigo-800">성향적합학과군</CardTitle>
+                <CardHeader className="bg-gradient-to-r from-blue-600 via-blue-700 to-blue-800 border-b border-blue-100">
+                  <CardTitle className="text-xl text-white">{data?.suitableJobsSummary?.tendency} 적합학과군</CardTitle>
                 </CardHeader>
                 <CardContent className="pt-6 bg-white">
                   {data?.suitableJobMajors?.map((item, index) => (
-                    <div key={`major-${index}`} className="mb-4 last:mb-0">
-                      <div className="bg-indigo-100 p-3 mb-2 rounded-lg">
-                        <h3 className="font-semibold text-indigo-800">추천{index + 1}</h3>
+                    <div key={`major-${index}`} className="mb-6 last:mb-0 group">
+                      <div className="bg-gradient-to-r from-blue-100 to-indigo-100 p-4 rounded-t-lg flex items-center">
+                        <div className="bg-blue-600 text-white rounded-full w-8 h-8 flex items-center justify-center mr-3 shadow-md">
+                          <span className="font-bold">{index + 1}</span>
+                        </div>
+                        <h3 className="font-bold text-blue-900">추천{index + 1}</h3>
                       </div>
-                      <div className="p-3 border border-indigo-100 rounded-lg mb-2">
-                        <p className="text-gray-800">{item.major}</p>
-                      </div>
-                      <div className="flex items-center">
-                        <Briefcase className="h-4 w-4 text-indigo-600 mr-2" />
-                        <span className="text-gray-700 text-sm">{item.jo_name}</span>
+                      
+                      <div className="bg-white border-2 border-t-0 border-blue-100 rounded-b-lg p-5 transition-all shadow-sm group-hover:shadow-md">
+                        <p className="text-gray-800 mb-4">{item.major}</p>
+                        
+                        <div className="flex items-center bg-blue-50 p-3 rounded-lg">
+                          <div className="bg-blue-100 p-2 rounded-full mr-3">
+                            <Briefcase className="h-5 w-5 text-blue-600" />
+                          </div>
+                          <span className="text-blue-800 font-medium">{item.jo_name}</span>
+                        </div>
                       </div>
                     </div>
                   ))}
