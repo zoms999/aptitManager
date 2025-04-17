@@ -330,6 +330,14 @@ export async function GET(
       WHERE rv.anp_seq = ${id}
     `;
     
+    // pd_kind 값 조회 쿼리 추가
+    const pdKindQuery = `
+      SELECT cr.pd_kind
+      FROM mwd_answer_progress anp
+      JOIN mwd_choice_result cr ON anp.cr_seq = cr.cr_seq
+      WHERE anp.anp_seq = ${id}
+    `;
+    
     // 로그 기록
     const logQuery = `
       INSERT INTO mwd_log_view_result (mg_seq, anp_seq, view_reason, view_date) 
@@ -353,6 +361,7 @@ export async function GET(
     const suitableJobsDetail = await db.$queryRawUnsafe(suitableJobsDetailQuery) as SuitableJob[];
     const suitableJobMajors = await db.$queryRawUnsafe(suitableJobMajorsQuery) as SuitableJobMajor[];
     const imagePreference = await db.$queryRawUnsafe(imagePreferenceQuery) as ImagePreference[];
+    const pdKindResult = await db.$queryRawUnsafe(pdKindQuery) as { pd_kind: string }[];
     
     // 로그 기록 (에러가 나도 응답에 영향을 주지 않도록 try-catch로 처리)
     try {
@@ -379,7 +388,8 @@ export async function GET(
         suitableJobsSummary: suitableJobsSummary[0],
         suitableJobsDetail,
         suitableJobMajors,
-        imagePreference: imagePreference[0]
+        imagePreference: imagePreference[0],
+        pd_kind: pdKindResult?.[0]?.pd_kind || 'basic' // pd_kind가 없을 경우 기본값으로 'basic' 설정
       }
     });
   } catch (error) {

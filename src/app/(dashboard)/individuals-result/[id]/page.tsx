@@ -154,6 +154,7 @@ interface ResultData {
   preferenceJobs1?: PreferenceJob[];
   preferenceJobs2?: PreferenceJob[];
   preferenceJobs3?: PreferenceJob[];
+  pd_kind?: string;
 }
 
 export default function IndividualResultPage({ params }: { params: { id: string } }) {
@@ -448,34 +449,46 @@ export default function IndividualResultPage({ params }: { params: { id: string 
             <PieChart className="h-4 w-4" />
             <span>성향분석</span>
           </TabsTrigger>
-          <TabsTrigger value="thinking" className="flex items-center gap-1">
-            <Lightbulb className="h-4 w-4" />
-            <span>사고력</span>
-          </TabsTrigger>
+          
+          {/* basic이 아닌 경우에만 사고력 탭 표시 */}
+          {data?.pd_kind !== 'basic' && (
+            <TabsTrigger value="thinking" className="flex items-center gap-1">
+              <Lightbulb className="h-4 w-4" />
+              <span>사고력</span>
+            </TabsTrigger>
+          )}
+          
           <TabsTrigger value="suitable-job" className="flex items-center gap-1">
             <Briefcase className="h-4 w-4" />
             <span>성향적합직업학과</span>
           </TabsTrigger>
-          <TabsTrigger value="competency" className="flex items-center gap-1">
-            <CheckSquare className="h-4 w-4" />
-            <span>역량진단</span>
-          </TabsTrigger>
-          <TabsTrigger value="competency-job" className="flex items-center gap-1">
-            <GraduationCap className="h-4 w-4" />
-            <span>역량적합직업</span>
-          </TabsTrigger>
-          <TabsTrigger value="learning" className="flex items-center gap-1">
-            <BookOpen className="h-4 w-4" />
-            <span>학습</span>
-          </TabsTrigger>
-          <TabsTrigger value="subjects" className="flex items-center gap-1">
-            <School className="h-4 w-4" />
-            <span>교과목</span>
-          </TabsTrigger>
-          <TabsTrigger value="job" className="flex items-center gap-1">
-            <Briefcase className="h-4 w-4" />
-            <span>직무</span>
-          </TabsTrigger>
+          
+          {/* basic이 아닌 경우에만 추가 탭 표시 */}
+          {data?.pd_kind !== 'basic' && (
+            <>
+              <TabsTrigger value="competency" className="flex items-center gap-1">
+                <CheckSquare className="h-4 w-4" />
+                <span>역량진단</span>
+              </TabsTrigger>
+              <TabsTrigger value="competency-job" className="flex items-center gap-1">
+                <GraduationCap className="h-4 w-4" />
+                <span>역량적합직업</span>
+              </TabsTrigger>
+              <TabsTrigger value="learning" className="flex items-center gap-1">
+                <BookOpen className="h-4 w-4" />
+                <span>학습</span>
+              </TabsTrigger>
+              <TabsTrigger value="subjects" className="flex items-center gap-1">
+                <School className="h-4 w-4" />
+                <span>교과목</span>
+              </TabsTrigger>
+              <TabsTrigger value="job" className="flex items-center gap-1">
+                <Briefcase className="h-4 w-4" />
+                <span>직무</span>
+              </TabsTrigger>
+            </>
+          )}
+          
           <TabsTrigger value="preference" className="flex items-center gap-1">
             <Heart className="h-4 w-4" />
             <span>선호도</span>
