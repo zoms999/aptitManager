@@ -211,6 +211,22 @@ export default function IndividualResultPage({ params }: { params: { id: string 
     router.back();
   };
   
+  // 인쇄 페이지 열기
+  const handlePrint = () => {
+    const baseUrl = window.location.origin;
+    // 화면 크기 계산
+    const width = 1024;
+    const height = 800;
+    const left = (window.screen.width - width) / 2;
+    const top = (window.screen.height - height) / 2;
+    
+    // 팝업창을 위한 창 설정
+    const windowFeatures = `width=${width},height=${height},left=${left},top=${top},resizable=yes,scrollbars=yes`;
+    
+    // 큰 팝업창으로 열기
+    window.open(`${baseUrl}/print/${id}`, '_blank', windowFeatures);
+  };
+  
   // 성향 설명 토글
   const toggleTopExpand = (rank: number) => {
     if (expandedTop.includes(rank)) {
@@ -423,14 +439,25 @@ export default function IndividualResultPage({ params }: { params: { id: string 
   return (
     <div className="container mx-auto py-8 px-6 max-w-7xl">
       <div className="mb-6">
-        <Button 
-          variant="outline" 
-          onClick={handleGoBack} 
-          className="text-indigo-700 border-indigo-200 bg-indigo-50/50 hover:bg-indigo-100 hover:text-indigo-800 hover:border-indigo-300 transition-all shadow-sm rounded-xl px-4"
-        >
-          <ArrowLeft className="h-4 w-4 mr-2" />
-          검사결과 목록으로 돌아가기
-        </Button>
+        <div className="flex flex-wrap gap-3">
+          <Button 
+            variant="outline" 
+            onClick={handleGoBack} 
+            className="text-indigo-700 border-indigo-200 bg-indigo-50/50 hover:bg-indigo-100 hover:text-indigo-800 hover:border-indigo-300 transition-all shadow-sm rounded-xl px-4"
+          >
+            <ArrowLeft className="h-4 w-4 mr-2" />
+            검사결과 목록으로 돌아가기
+          </Button>
+          
+          <Button 
+            variant="outline" 
+            onClick={handlePrint} 
+            className="text-blue-700 border-blue-200 bg-blue-50/50 hover:bg-blue-100 hover:text-blue-800 hover:border-blue-300 transition-all shadow-sm rounded-xl px-4"
+          >
+            <FileText className="h-4 w-4 mr-2" />
+            검사 결과 인쇄
+          </Button>
+        </div>
       </div>
       
       <div className="flex flex-col md:flex-row justify-between items-start md:items-center gap-4 mb-6">
@@ -1078,12 +1105,12 @@ export default function IndividualResultPage({ params }: { params: { id: string 
             <div className="grid grid-cols-1 gap-6">
               <div className="text-center">
                 <h2 className="text-2xl font-bold text-gray-800 mb-2">{data?.personalInfo.pname}님!</h2>
-                <p className="text-lg font-medium mb-4">옥타그노시스 검사 결과에 따른 성향에 적합한 직업과 학과 입니다.</p>
+                <p className="text-lg font-medium mb-4">옥타그노시스 검사 결과에 따른 성향에 적합한 직업과 학과입니다.</p>
               </div>
               
               <Card className="mb-2">
-                <CardContent className="p-6 bg-gradient-to-r from-indigo-50 to-blue-50">
-                  <p className="text-gray-700 text-center">성향과 적성을 분석하여 {data?.personalInfo.pname}님에게 가장 적합한 전공과 직업을 도출한 결과입니다.</p>
+                <CardContent className="p-6 bg-gradient-to-r from-indigo-100 to-blue-100">
+                  <p className="text-gray-700 text-center">{data?.personalInfo.pname}님의 검사 결과에 따른 성향과 적성을 분석하여 가장 적합한 전공과 직업을 도출한 결과입니다.</p>
                 </CardContent>
               </Card>
               
@@ -1093,13 +1120,13 @@ export default function IndividualResultPage({ params }: { params: { id: string 
                   <CardTitle className="text-xl text-white">{data?.suitableJobsSummary?.tendency} 적합직업군</CardTitle>
                 </CardHeader>
                 <CardContent className="pt-6 bg-white">
-                  {data?.suitableJobsDetail && data.suitableJobsDetail.map((item, index) => (
+                  {data?.suitableJobsDetail && data.suitableJobsDetail.map((job, index) => (
                     <div key={`job-${index}`} className="mb-8 last:mb-0 group">
                       <div className="bg-gradient-to-r from-indigo-100 to-blue-100 rounded-t-lg p-4 flex items-center">
                         <div className="bg-indigo-600 text-white rounded-full w-8 h-8 flex items-center justify-center mr-3 shadow-md">
                           <span className="font-bold">{index + 1}</span>
                         </div>
-                        <h3 className="text-lg font-bold text-indigo-900">추천{index + 1} {item.jo_name}</h3>
+                        <h3 className="text-lg font-bold text-indigo-900">추천{index + 1} {job.jo_name}</h3>
                       </div>
                       
                       <div className="bg-white border-2 border-t-0 border-indigo-100 rounded-b-lg p-5 transition-all shadow-sm group-hover:shadow-md">
@@ -1111,7 +1138,7 @@ export default function IndividualResultPage({ params }: { params: { id: string 
                               </div>
                               직업개요
                             </h4>
-                            <p className="text-gray-700 pl-8">{item.jo_outline}</p>
+                            <p className="text-gray-700 pl-8">{job.jo_outline}</p>
                           </div>
                           
                           <div className="space-y-3">
@@ -1121,7 +1148,7 @@ export default function IndividualResultPage({ params }: { params: { id: string 
                               </div>
                               주요업무
                             </h4>
-                            <p className="text-gray-700 pl-8 whitespace-pre-line">{item.jo_mainbusiness || '정보가 제공되지 않았습니다.'}</p>
+                            <p className="text-gray-700 pl-8 whitespace-pre-line">{job.jo_mainbusiness || '정보가 제공되지 않았습니다.'}</p>
                           </div>
                         </div>
                       </div>
@@ -1136,23 +1163,21 @@ export default function IndividualResultPage({ params }: { params: { id: string 
                   <CardTitle className="text-xl text-white">{data?.suitableJobsSummary?.tendency} 적합학과군</CardTitle>
                 </CardHeader>
                 <CardContent className="pt-6 bg-white">
-                  {data?.suitableJobMajors?.map((item, index) => (
+                  {data?.suitableJobMajors?.map((major, index) => (
                     <div key={`major-${index}`} className="mb-6 last:mb-0 group">
                       <div className="bg-gradient-to-r from-blue-100 to-indigo-100 p-4 rounded-t-lg flex items-center">
                         <div className="bg-blue-600 text-white rounded-full w-8 h-8 flex items-center justify-center mr-3 shadow-md">
                           <span className="font-bold">{index + 1}</span>
                         </div>
-                        <h3 className="font-bold text-blue-900">추천{index + 1}</h3>
+                        <h3 className="font-bold text-blue-900">추천{index + 1} {major.major}</h3>
                       </div>
                       
                       <div className="bg-white border-2 border-t-0 border-blue-100 rounded-b-lg p-5 transition-all shadow-sm group-hover:shadow-md">
-                        <p className="text-gray-800 mb-4">{item.major}</p>
-                        
                         <div className="flex items-center bg-blue-50 p-3 rounded-lg">
                           <div className="bg-blue-100 p-2 rounded-full mr-3">
                             <Briefcase className="h-5 w-5 text-blue-600" />
                           </div>
-                          <span className="text-blue-800 font-medium">{item.jo_name}</span>
+                          <span className="text-blue-800 font-medium">관련직업: {major.jo_name}</span>
                         </div>
                       </div>
                     </div>
