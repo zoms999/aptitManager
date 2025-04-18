@@ -595,15 +595,15 @@ export default function IndividualResultPage({ params }: { params: { id: string 
             <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
               {/* 개인 기본 정보 카드 */}
               <Card className="overflow-hidden border-none shadow-md hover:shadow-lg transition-all duration-300">
-                <CardHeader className="bg-gradient-to-r from-blue-50 to-indigo-50 border-b border-blue-100">
-                  <CardTitle className="flex items-center text-xl gap-2 text-indigo-800">
+                <CardHeader className="bg-gradient-to-r from-blue-50 to-indigo-50 border-b border-blue-100 py-3">
+                  <CardTitle className="flex items-center text-lg gap-2 text-indigo-800">
                     <div className="bg-white p-2 rounded-full shadow-sm">
                       <User className="h-5 w-5 text-indigo-600" />
                     </div>
                     개인 기본 정보
                   </CardTitle>
                 </CardHeader>
-                <CardContent className="pt-6 bg-white">
+                <CardContent className="pt-4 bg-white">
                   <dl className="space-y-4">
                     <div className="flex items-start">
                       <dt className="w-28 text-gray-500 font-medium">이름</dt>
@@ -645,15 +645,15 @@ export default function IndividualResultPage({ params }: { params: { id: string 
               
               {/* 학력 및 직업 정보 카드 */}
               <Card className="overflow-hidden border-none shadow-md hover:shadow-lg transition-all duration-300">
-                <CardHeader className="bg-gradient-to-r from-blue-50 to-indigo-50 border-b border-blue-100">
-                  <CardTitle className="flex items-center text-xl gap-2 text-indigo-800">
+                <CardHeader className="bg-gradient-to-r from-blue-50 to-indigo-50 border-b border-blue-100 py-3">
+                  <CardTitle className="flex items-center text-lg gap-2 text-indigo-800">
                     <div className="bg-white p-2 rounded-full shadow-sm">
                       <GraduationCap className="h-5 w-5 text-indigo-600" />
                     </div>
                     학력 및 직업 정보
                   </CardTitle>
                 </CardHeader>
-                <CardContent className="pt-6 bg-white">
+                <CardContent className="pt-4 bg-white">
                   <dl className="space-y-4">
                     <div className="flex items-start">
                       <dt className="w-28 text-gray-500 font-medium">최종학력</dt>
@@ -720,10 +720,10 @@ export default function IndividualResultPage({ params }: { params: { id: string 
               <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                 {/* 나의 성향 (상위 3개) */}
                 <Card className="overflow-hidden border-none shadow-md hover:shadow-lg transition-all duration-300">
-                  <CardHeader className="bg-gradient-to-r from-teal-600 to-teal-500 border-b border-teal-100">
-                    <CardTitle className="text-xl text-white">나의 성향</CardTitle>
+                  <CardHeader className="bg-gradient-to-r from-teal-600 to-teal-500 border-b border-teal-100 py-3">
+                    <CardTitle className="text-lg text-white">나의 성향</CardTitle>
                   </CardHeader>
-                  <CardContent className="pt-6 bg-white">
+                  <CardContent className="pt-4 bg-white">
                     {data?.topTendencies?.map((item, index) => {
                       const explain = data?.topTendencyExplains?.find(e => e.rank === item.rank);
                       const isExpanded = expandedTop.includes(item.rank);
@@ -755,10 +755,10 @@ export default function IndividualResultPage({ params }: { params: { id: string 
                 
                 {/* 나와 잘 안 맞는 성향 (하위 3개) */}
                 <Card className="overflow-hidden border-none shadow-md hover:shadow-lg transition-all duration-300">
-                  <CardHeader className="bg-gradient-to-r from-orange-600 to-orange-500 border-b border-orange-100">
-                    <CardTitle className="text-xl text-white">나와 잘 안 맞는 성향</CardTitle>
+                  <CardHeader className="bg-gradient-to-r from-orange-600 to-orange-500 border-b border-orange-100 py-3">
+                    <CardTitle className="text-lg text-white">나와 잘 안 맞는 성향</CardTitle>
                   </CardHeader>
-                  <CardContent className="pt-6 bg-white">
+                  <CardContent className="pt-4 bg-white">
                     {data?.bottomTendencies?.map((item, index) => {
                       const explain = data?.bottomTendencyExplains?.find(e => e.rank === item.rank);
                       const isExpanded = expandedBottom.includes(item.rank);
@@ -790,10 +790,10 @@ export default function IndividualResultPage({ params }: { params: { id: string 
               </div>
             {/* 나를 이루는 기운이 되는 성향 3개를 진단해드렸습니다. 하위성향은 나와는 잘 안 맞는 성향입니다. */}
               <Card className="overflow-hidden border-none shadow-md hover:shadow-lg transition-all duration-300">
-                <CardHeader className="bg-gradient-to-r from-slate-700 to-slate-600 border-b border-slate-100">
-                  <CardTitle className="text-xl text-white">나를 이루는 기운이 되는 성향 3개를 진단해드렸습니다. 하위성향은 나와는 잘 안 맞는 성향입니다.</CardTitle>
+                <CardHeader className="bg-gradient-to-r from-slate-700 to-slate-600 border-b border-slate-100 py-3">
+                  <CardTitle className="text-lg text-white">나를 이루는 기운이 되는 성향 3개를 진단해드렸습니다. 하위성향은 나와는 잘 안 맞는 성향입니다.</CardTitle>
                 </CardHeader>
-                <CardContent className="pt-6 bg-white">
+                <CardContent className="pt-4 bg-white">
                   <p className="text-gray-700">
                     나를 이루는 기운이 되는 성향 3개를 진단해드렸습니다. 하위성향은 나와는 잘 안 맞는 성향입니다.
                   </p>
@@ -801,8 +801,8 @@ export default function IndividualResultPage({ params }: { params: { id: string 
               </Card>
               {/* 성향 정보 카드 */}
               <Card className="overflow-hidden border-none shadow-md hover:shadow-lg transition-all duration-300">
-                <CardHeader className="bg-gradient-to-r from-blue-50 via-blue-200 to-blue-100 border-b border-blue-100">
-                  <CardTitle className="flex items-center text-xl gap-2 text-blue-800">
+                <CardHeader className="bg-gradient-to-r from-blue-50 via-blue-200 to-blue-100 border-b border-blue-100 py-3">
+                  <CardTitle className="flex items-center text-lg gap-2 text-blue-800">
                     <div className="bg-white p-2 rounded-full shadow-sm">
                       <Brain className="h-5 w-5 text-blue-600" />
                     </div>
@@ -812,7 +812,7 @@ export default function IndividualResultPage({ params }: { params: { id: string 
                     {data?.personalInfo.pname}님의 주요 성향은 <Badge variant="outline" className="font-semibold text-blue-800">{data?.tendency.tnd1}</Badge>과(와) <Badge variant="outline" className="font-semibold text-blue-800">{data?.tendency.tnd2}</Badge>입니다.
                   </CardDescription>
                 </CardHeader>
-                <CardContent className="pt-6 bg-white">
+                <CardContent className="pt-4 bg-white">
                   <div className="space-y-6">
                     <div>
                       <h3 className="font-semibold text-lg mb-4 text-slate-800">주요 성향 설명</h3>
@@ -932,15 +932,15 @@ export default function IndividualResultPage({ params }: { params: { id: string 
               {/* 성향 질문 설명 */}
               {data?.tendencyQuestionExplains && data.tendencyQuestionExplains.length > 0 && (
                 <Card className="overflow-hidden border-none shadow-md hover:shadow-lg transition-all duration-300">
-                  <CardHeader className="bg-gradient-to-r from-blue-50 via-blue-200 to-blue-100 border-b border-blue-100">
-                    <CardTitle className="flex items-center text-xl gap-2 text-blue-800">
+                  <CardHeader className="bg-gradient-to-r from-blue-50 via-blue-200 to-blue-100 border-b border-blue-100 py-3">
+                    <CardTitle className="flex items-center text-lg gap-2 text-blue-800">
                       <div className="bg-white p-2 rounded-full shadow-sm">
                         <Brain className="h-5 w-5 text-blue-600" />
                       </div>
                       {data?.personalInfo.pname}님의 성향 특성
                     </CardTitle>
                   </CardHeader>
-                  <CardContent className="pt-6 bg-white">
+                  <CardContent className="pt-4 bg-white">
                     <div className="space-y-6">
                       {data?.tendencyQuestionExplains.map((item, index) => (
                         <div key={`explain-${index}`} className="pb-4 border-b border-gray-200 last:border-0">
@@ -976,15 +976,15 @@ export default function IndividualResultPage({ params }: { params: { id: string 
               
               {/* 주사고 및 부사고 정보 */}
               <Card className="overflow-hidden border-none shadow-md hover:shadow-lg transition-all duration-300">
-                <CardHeader className="bg-gradient-to-r from-amber-50 via-amber-200 to-amber-100 border-b border-amber-100">
-                  <CardTitle className="text-xl text-amber-800">사고력 유형 결과</CardTitle>
+                <CardHeader className="bg-gradient-to-r from-amber-50 via-amber-200 to-amber-100 border-b border-amber-100 py-3">
+                  <CardTitle className="text-lg text-amber-800">사고력 유형 결과</CardTitle>
                   <CardDescription>
                     {data?.personalInfo.pname}님의 주 사고력 유형은 <Badge variant="outline" className="font-semibold text-amber-800">{data?.thinkingMain?.thkm}</Badge>, 
                     부 사고력 유형은 <Badge variant="outline" className="font-semibold text-amber-800">{data?.thinkingMain?.thks}</Badge>입니다.
                     T점수는 <Badge variant="outline" className="font-semibold text-amber-800">{data?.thinkingMain?.tscore}점</Badge>입니다.
                   </CardDescription>
                 </CardHeader>
-                <CardContent className="pt-6 bg-white">
+                <CardContent className="pt-4 bg-white">
                   <div className="p-4 bg-amber-50 rounded-lg text-center mb-4">
                     <p className="text-gray-700">
                       옥타그노시스 검사 결과, {data?.personalInfo.pname}님은 8가지 사고력을 진단한 결과입니다.
@@ -1046,10 +1046,10 @@ export default function IndividualResultPage({ params }: { params: { id: string 
               
               {/* 사고력 영역별 설명 */}
               <Card className="overflow-hidden border-none shadow-md hover:shadow-lg transition-all duration-300">
-                <CardHeader className="bg-gradient-to-r from-amber-50 via-amber-200 to-amber-100 border-b border-amber-100">
-                  <CardTitle className="text-xl text-amber-800">사고력 상세 분석</CardTitle>
+                <CardHeader className="bg-gradient-to-r from-amber-50 via-amber-200 to-amber-100 border-b border-amber-100 py-3">
+                  <CardTitle className="text-lg text-amber-800">사고력 상세 분석</CardTitle>
                 </CardHeader>
-                <CardContent className="pt-6 bg-white">
+                <CardContent className="pt-4 bg-white">
                   <div className="space-y-6">
                     {data?.thinkingDetails?.map((item, index) => {
                       const scoreColor = 
@@ -1077,10 +1077,10 @@ export default function IndividualResultPage({ params }: { params: { id: string 
               
               {/* kk님의 8가지 사고력을 진단한 결과입니다. */}
               <Card className="overflow-hidden border-none shadow-md hover:shadow-lg transition-all duration-300">
-                <CardHeader className="bg-gradient-to-r from-teal-700 to-teal-600 border-b border-teal-100">
-                  <CardTitle className="text-xl text-white">{data?.personalInfo.pname || ''}님의 8가지 사고력을 진단한 결과입니다.</CardTitle>
+                <CardHeader className="bg-gradient-to-r from-teal-700 to-teal-600 border-b border-teal-100 py-3">
+                  <CardTitle className="text-lg text-white">{data?.personalInfo.pname || ''}님의 8가지 사고력을 진단한 결과입니다.</CardTitle>
                 </CardHeader>
-                <CardContent className="pt-6 bg-white">
+                <CardContent className="pt-4 bg-white">
                   <p className="text-gray-700">
                     {data?.personalInfo.pname || ''}님의 8가지 사고력을 진단한 결과입니다.
                   </p>
@@ -1116,39 +1116,39 @@ export default function IndividualResultPage({ params }: { params: { id: string 
               
               {/* 성향적합직업군 요약 */}
               <Card className="overflow-hidden border-none shadow-md hover:shadow-lg transition-all duration-300">
-                <CardHeader className="bg-gradient-to-r from-indigo-600 via-indigo-700 to-indigo-800 border-b border-indigo-100">
-                  <CardTitle className="text-xl text-white">{data?.suitableJobsSummary?.tendency} 적합직업군</CardTitle>
+                <CardHeader className="bg-gradient-to-r from-indigo-600 via-indigo-700 to-indigo-800 border-b border-indigo-100 py-3">
+                  <CardTitle className="text-lg text-white">{data?.suitableJobsSummary?.tendency} 적합직업군</CardTitle>
                 </CardHeader>
-                <CardContent className="pt-6 bg-white">
+                <CardContent className="pt-4 bg-white">
                   {data?.suitableJobsDetail && data.suitableJobsDetail.map((job, index) => (
                     <div key={`job-${index}`} className="mb-8 last:mb-0 group">
-                      <div className="bg-gradient-to-r from-indigo-100 to-blue-100 rounded-t-lg p-4 flex items-center">
+                      <div className="bg-gradient-to-r from-indigo-100 to-blue-100 rounded-t-lg p-2 flex items-center">
                         <div className="bg-indigo-600 text-white rounded-full w-8 h-8 flex items-center justify-center mr-3 shadow-md">
                           <span className="font-bold">{index + 1}</span>
                         </div>
-                        <h3 className="text-lg font-bold text-indigo-900">추천{index + 1} {job.jo_name}</h3>
+                        <h3 className="text-sm font-medium text-indigo-900">추천{index + 1} {job.jo_name}</h3>
                       </div>
                       
                       <div className="bg-white border-2 border-t-0 border-indigo-100 rounded-b-lg p-5 transition-all shadow-sm group-hover:shadow-md">
                         <div className="grid grid-cols-1 md:grid-cols-2 gap-5">
                           <div className="space-y-3">
-                            <h4 className="font-bold text-indigo-800 flex items-center">
+                            <h4 className="font-bold text-indigo-800 flex items-center text-sm">
                               <div className="bg-indigo-100 p-1.5 rounded-full mr-2">
                                 <Briefcase className="h-4 w-4 text-indigo-600" />
                               </div>
                               직업개요
                             </h4>
-                            <p className="text-gray-700 pl-8">{job.jo_outline}</p>
+                            <p className="text-gray-700 pl-8 text-sm">{job.jo_outline}</p>
                           </div>
                           
                           <div className="space-y-3">
-                            <h4 className="font-bold text-indigo-800 flex items-center">
+                            <h4 className="font-bold text-indigo-800 flex items-center text-sm">
                               <div className="bg-indigo-100 p-1.5 rounded-full mr-2">
                                 <CheckSquare className="h-4 w-4 text-indigo-600" />
                               </div>
                               주요업무
                             </h4>
-                            <p className="text-gray-700 pl-8 whitespace-pre-line">{job.jo_mainbusiness || '정보가 제공되지 않았습니다.'}</p>
+                            <p className="text-gray-700 pl-8 whitespace-pre-line text-sm">{job.jo_mainbusiness || '정보가 제공되지 않았습니다.'}</p>
                           </div>
                         </div>
                       </div>
@@ -1159,25 +1159,25 @@ export default function IndividualResultPage({ params }: { params: { id: string 
               
               {/* 성향적합학과군 */}
               <Card className="overflow-hidden border-none shadow-md hover:shadow-lg transition-all duration-300">
-                <CardHeader className="bg-gradient-to-r from-blue-600 via-blue-700 to-blue-800 border-b border-blue-100">
-                  <CardTitle className="text-xl text-white">{data?.suitableJobsSummary?.tendency} 적합학과군</CardTitle>
+                <CardHeader className="bg-gradient-to-r from-blue-600 via-blue-700 to-blue-800 border-b border-blue-100 py-3">
+                  <CardTitle className="text-lg text-white">{data?.suitableJobsSummary?.tendency} 적합학과군</CardTitle>
                 </CardHeader>
-                <CardContent className="pt-6 bg-white">
+                <CardContent className="pt-4 bg-white">
                   {data?.suitableJobMajors?.map((major, index) => (
                     <div key={`major-${index}`} className="mb-6 last:mb-0 group">
-                      <div className="bg-gradient-to-r from-blue-100 to-indigo-100 p-4 rounded-t-lg flex items-center">
+                      <div className="bg-gradient-to-r from-blue-100 to-indigo-100 p-2 rounded-t-lg flex items-center">
                         <div className="bg-blue-600 text-white rounded-full w-8 h-8 flex items-center justify-center mr-3 shadow-md">
                           <span className="font-bold">{index + 1}</span>
                         </div>
-                        <h3 className="font-bold text-blue-900">추천{index + 1} {major.major}</h3>
+                        <h3 className="font-medium text-blue-900 text-sm">추천{index + 1} {major.major}</h3>
                       </div>
                       
                       <div className="bg-white border-2 border-t-0 border-blue-100 rounded-b-lg p-5 transition-all shadow-sm group-hover:shadow-md">
-                        <div className="flex items-center bg-blue-50 p-3 rounded-lg">
+                        <div className="flex items-center bg-blue-50 p-2 rounded-lg">
                           <div className="bg-blue-100 p-2 rounded-full mr-3">
                             <Briefcase className="h-5 w-5 text-blue-600" />
                           </div>
-                          <span className="text-blue-800 font-medium">관련직업: {major.jo_name}</span>
+                          <span className="text-blue-800 font-medium text-sm">관련직업: {major.jo_name}</span>
                         </div>
                       </div>
                     </div>
@@ -1249,10 +1249,10 @@ export default function IndividualResultPage({ params }: { params: { id: string 
               {/* 선호반응 차트 추가 */}
               {data?.imagePreference && (
                 <Card className="overflow-hidden border-none shadow-md hover:shadow-lg transition-all duration-300">
-                  <CardHeader className="bg-gradient-to-r from-rose-50 to-rose-600 border-b border-rose-100">
-                    <CardTitle className="text-xl text-rose-800">선호반응 비율</CardTitle>
+                  <CardHeader className="bg-gradient-to-r from-rose-50 to-rose-600 border-b border-rose-100 py-3">
+                    <CardTitle className="text-lg text-rose-800">선호반응 비율</CardTitle>
                   </CardHeader>
-                  <CardContent className="pt-6 bg-white">
+                  <CardContent className="pt-4 bg-white">
                     <div className="h-[100px]">
                       <ResponsiveContainer width="100%" height="100%">
                         <BarChart 
@@ -1287,10 +1287,10 @@ export default function IndividualResultPage({ params }: { params: { id: string 
               
               {/* 선호도 차트 추가 */}
               <Card className="overflow-hidden border-none shadow-md hover:shadow-lg transition-all duration-300">
-                <CardHeader className="bg-gradient-to-r from-purple-50 to-purple-600 border-b border-purple-100">
-                  <CardTitle className="text-xl text-purple-800">이미지 선호도 분석 차트</CardTitle>
+                <CardHeader className="bg-gradient-to-r from-purple-50 to-purple-600 border-b border-purple-100 py-3">
+                  <CardTitle className="text-lg text-purple-800">이미지 선호도 분석 차트</CardTitle>
                 </CardHeader>
-                <CardContent className="pt-6 bg-white">
+                <CardContent className="pt-4 bg-white">
                   <div className="grid grid-cols-1 gap-6">
                     {/* 수평 바 차트 */}
                     <div className="h-[180px]">
@@ -1351,15 +1351,15 @@ export default function IndividualResultPage({ params }: { params: { id: string 
               
               {/* 선호 이미지 상위 3개 */}
               <Card className="overflow-hidden border-none shadow-md hover:shadow-lg transition-all duration-300">
-                <CardHeader className="bg-gradient-to-r from-purple-50 via-purple-200 to-purple-100 border-b border-purple-100">
-                  <CardTitle className="text-xl text-purple-800">선호 이미지 상위 3개</CardTitle>
+                <CardHeader className="bg-gradient-to-r from-purple-50 via-purple-200 to-purple-100 border-b border-purple-100 py-3">
+                  <CardTitle className="text-lg text-purple-800">선호 이미지 상위 3개</CardTitle>
                 </CardHeader>
-                <CardContent className="pt-6 bg-white">
+                <CardContent className="pt-4 bg-white">
                   <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
                     {/* 첫 번째 선호 이미지 */}
                     <div className="border rounded-lg overflow-hidden">
-                      <div className="bg-purple-100 p-3">
-                        <h3 className="font-semibold text-purple-800">1순위: {data.preferenceData.tdname1}</h3>
+                      <div className="bg-purple-100 p-2">
+                        <h3 className="font-semibold text-sm text-purple-800">1순위: {data.preferenceData.tdname1}</h3>
                       </div>
                       <div className="p-4">
                         <div className="mb-2">
@@ -1376,8 +1376,8 @@ export default function IndividualResultPage({ params }: { params: { id: string 
                     
                     {/* 두 번째 선호 이미지 */}
                     <div className="border rounded-lg overflow-hidden">
-                      <div className="bg-purple-100 p-3">
-                        <h3 className="font-semibold text-purple-800">2순위: {data.preferenceData.tdname2}</h3>
+                      <div className="bg-purple-100 p-2">
+                        <h3 className="font-semibold text-sm text-purple-800">2순위: {data.preferenceData.tdname2}</h3>
                       </div>
                       <div className="p-4">
                         <div className="mb-2">
@@ -1394,8 +1394,8 @@ export default function IndividualResultPage({ params }: { params: { id: string 
                     
                     {/* 세 번째 선호 이미지 */}
                     <div className="border rounded-lg overflow-hidden">
-                      <div className="bg-purple-100 p-3">
-                        <h3 className="font-semibold text-purple-800">3순위: {data.preferenceData.tdname3}</h3>
+                      <div className="bg-purple-100 p-2">
+                        <h3 className="font-semibold text-sm text-purple-800">3순위: {data.preferenceData.tdname3}</h3>
                       </div>
                       <div className="p-4">
                         <div className="mb-2">
@@ -1416,28 +1416,28 @@ export default function IndividualResultPage({ params }: { params: { id: string 
               {/* 1순위 이미지 선호도에 따른 직업/학과 */}
               {data?.preferenceJobs1 && data.preferenceJobs1.length > 0 && (
                 <Card className="overflow-hidden border-none shadow-md hover:shadow-lg transition-all duration-300">
-                  <CardHeader className="bg-gradient-to-r from-purple-50 via-purple-200 to-purple-100 border-b border-purple-100">
-                    <CardTitle className="text-xl text-purple-800">선호 이미지 선호도에 따른 추천직업/학과</CardTitle>
+                  <CardHeader className="bg-gradient-to-r from-purple-50 via-purple-200 to-purple-100 border-b border-purple-100 py-3">
+                    <CardTitle className="text-lg text-purple-800">선호 이미지 선호도에 따른 추천직업/학과</CardTitle>
                   </CardHeader>
-                  <CardContent className="pt-6 bg-white">
+                  <CardContent className="pt-4 bg-white">
                     {data.preferenceJobs1.map((job, index) => (
                       <div key={`job1-${index}`} className="mb-6 last:mb-0">
-                        <div className="bg-purple-100 p-4 mb-3 rounded-t-lg">
-                          <h3 className="font-bold text-purple-800">추천{index + 1} {job.jo_name}</h3>
+                        <div className="bg-purple-100 p-2 mb-3 rounded-t-lg">
+                          <h3 className="font-medium text-sm text-purple-800">추천{index + 1} {job.jo_name}</h3>
                         </div>
                         <div className="grid grid-cols-1 md:grid-cols-2 gap-4 p-4 border border-purple-100 rounded-b-lg">
                           <div>
-                            <h4 className="font-semibold text-gray-700 mb-2">직업개요</h4>
+                            <h4 className="font-semibold text-gray-700 mb-2 text-sm">직업개요</h4>
                             <p className="text-gray-600 text-sm">{job.jo_outline}</p>
                           </div>
                           <div>
-                            <h4 className="font-semibold text-gray-700 mb-2">주요업무</h4>
+                            <h4 className="font-semibold text-gray-700 mb-2 text-sm">주요업무</h4>
                             <p className="text-gray-600 text-sm whitespace-pre-line">{job.jo_mainbusiness || '정보가 제공되지 않았습니다.'}</p>
                           </div>
                         </div>
-                        <div className="mt-3 p-3 bg-gray-50 rounded-lg">
-                          <h4 className="font-semibold text-gray-700 mb-2">관련학과</h4>
-                          <p className="text-gray-600">{job.majors}</p>
+                        <div className="mt-3 p-2 bg-gray-50 rounded-lg">
+                          <h4 className="font-semibold text-gray-700 mb-2 text-sm">관련학과</h4>
+                          <p className="text-gray-600 text-sm">{job.majors}</p>
                         </div>
                       </div>
                     ))}
@@ -1448,28 +1448,28 @@ export default function IndividualResultPage({ params }: { params: { id: string 
               {/* 2순위 이미지 선호도에 따른 직업/학과 */}
               {data?.preferenceJobs2 && data.preferenceJobs2.length > 0 && (
                 <Card className="overflow-hidden border-none shadow-md hover:shadow-lg transition-all duration-300">
-                  <CardHeader className="bg-gradient-to-r from-purple-50 via-purple-200 to-purple-100 border-b border-purple-100">
-                    <CardTitle className="text-xl text-purple-800">선호 이미지 선호도에 따른 추천직업/학과</CardTitle>
+                  <CardHeader className="bg-gradient-to-r from-purple-50 via-purple-200 to-purple-100 border-b border-purple-100 py-3">
+                    <CardTitle className="text-lg text-purple-800">선호 이미지 선호도에 따른 추천직업/학과</CardTitle>
                   </CardHeader>
-                  <CardContent className="pt-6 bg-white">
+                  <CardContent className="pt-4 bg-white">
                     {data.preferenceJobs2.map((job, index) => (
                       <div key={`job2-${index}`} className="mb-6 last:mb-0">
-                        <div className="bg-purple-100 p-4 mb-3 rounded-t-lg">
-                          <h3 className="font-bold text-purple-800">추천{index + 1} {job.jo_name}</h3>
+                        <div className="bg-purple-100 p-2 mb-3 rounded-t-lg">
+                          <h3 className="font-medium text-sm text-purple-800">추천{index + 1} {job.jo_name}</h3>
                         </div>
                         <div className="grid grid-cols-1 md:grid-cols-2 gap-4 p-4 border border-purple-100 rounded-b-lg">
                           <div>
-                            <h4 className="font-semibold text-gray-700 mb-2">직업개요</h4>
+                            <h4 className="font-semibold text-gray-700 mb-2 text-sm">직업개요</h4>
                             <p className="text-gray-600 text-sm">{job.jo_outline}</p>
                           </div>
                           <div>
-                            <h4 className="font-semibold text-gray-700 mb-2">주요업무</h4>
+                            <h4 className="font-semibold text-gray-700 mb-2 text-sm">주요업무</h4>
                             <p className="text-gray-600 text-sm whitespace-pre-line">{job.jo_mainbusiness || '정보가 제공되지 않았습니다.'}</p>
                           </div>
                         </div>
-                        <div className="mt-3 p-3 bg-gray-50 rounded-lg">
-                          <h4 className="font-semibold text-gray-700 mb-2">관련학과</h4>
-                          <p className="text-gray-600">{job.majors}</p>
+                        <div className="mt-3 p-2 bg-gray-50 rounded-lg">
+                          <h4 className="font-semibold text-gray-700 mb-2 text-sm">관련학과</h4>
+                          <p className="text-gray-600 text-sm">{job.majors}</p>
                         </div>
                       </div>
                     ))}
@@ -1480,28 +1480,28 @@ export default function IndividualResultPage({ params }: { params: { id: string 
               {/* 3순위 이미지 선호도에 따른 직업/학과 */}
               {data?.preferenceJobs3 && data.preferenceJobs3.length > 0 && (
                 <Card className="overflow-hidden border-none shadow-md hover:shadow-lg transition-all duration-300">
-                  <CardHeader className="bg-gradient-to-r from-purple-50 via-purple-200 to-purple-100 border-b border-purple-100">
-                    <CardTitle className="text-xl text-purple-800">선호 이미지 선호도에 따른 추천직업/학과</CardTitle>
+                  <CardHeader className="bg-gradient-to-r from-purple-50 via-purple-200 to-purple-100 border-b border-purple-100 py-3">
+                    <CardTitle className="text-lg text-purple-800">선호 이미지 선호도에 따른 추천직업/학과</CardTitle>
                   </CardHeader>
-                  <CardContent className="pt-6 bg-white">
+                  <CardContent className="pt-4 bg-white">
                     {data.preferenceJobs3.map((job, index) => (
                       <div key={`job3-${index}`} className="mb-6 last:mb-0">
-                        <div className="bg-purple-100 p-4 mb-3 rounded-t-lg">
-                          <h3 className="font-bold text-purple-800">추천{index + 1} {job.jo_name}</h3>
+                        <div className="bg-purple-100 p-2 mb-3 rounded-t-lg">
+                          <h3 className="font-medium text-sm text-purple-800">추천{index + 1} {job.jo_name}</h3>
                         </div>
                         <div className="grid grid-cols-1 md:grid-cols-2 gap-4 p-4 border border-purple-100 rounded-b-lg">
                           <div>
-                            <h4 className="font-semibold text-gray-700 mb-2">직업개요</h4>
+                            <h4 className="font-semibold text-gray-700 mb-2 text-sm">직업개요</h4>
                             <p className="text-gray-600 text-sm">{job.jo_outline}</p>
                           </div>
                           <div>
-                            <h4 className="font-semibold text-gray-700 mb-2">주요업무</h4>
+                            <h4 className="font-semibold text-gray-700 mb-2 text-sm">주요업무</h4>
                             <p className="text-gray-600 text-sm whitespace-pre-line">{job.jo_mainbusiness || '정보가 제공되지 않았습니다.'}</p>
                           </div>
                         </div>
-                        <div className="mt-3 p-3 bg-gray-50 rounded-lg">
-                          <h4 className="font-semibold text-gray-700 mb-2">관련학과</h4>
-                          <p className="text-gray-600">{job.majors}</p>
+                        <div className="mt-3 p-2 bg-gray-50 rounded-lg">
+                          <h4 className="font-semibold text-gray-700 mb-2 text-sm">관련학과</h4>
+                          <p className="text-gray-600 text-sm">{job.majors}</p>
                         </div>
                       </div>
                     ))}
