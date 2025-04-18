@@ -155,6 +155,14 @@ interface ResultData {
   preferenceJobs2?: PreferenceJob[];
   preferenceJobs3?: PreferenceJob[];
   pd_kind?: string;
+  talentList?: string;
+  talentDetails?: TalentDetail[];
+}
+
+interface TalentDetail {
+  qua_name: string;
+  tscore: number;
+  explain: string;
 }
 
 export default function IndividualResultPage({ params }: { params: { id: string } }) {
@@ -172,11 +180,12 @@ export default function IndividualResultPage({ params }: { params: { id: string 
     const fetchData = async () => {
       try {
         setLoading(true);
+        // 기본 데이터 로드
         const response = await fetch(`/api/individuals-result/${id}`);
         const result = await response.json();
         
         if (result.success) {
-          // 선호도 데이터 가져오기 (실제 API가 만들어져 있다고 가정)
+          // 선호도 데이터 로드
           try {
             const prefResponse = await fetch(`/api/individuals-result/${id}/preference`);
             const prefResult = await prefResponse.json();
@@ -187,20 +196,71 @@ export default function IndividualResultPage({ params }: { params: { id: string 
               result.data.preferenceJobs2 = prefResult.data.preferenceJobs2;
               result.data.preferenceJobs3 = prefResult.data.preferenceJobs3;
             }
-          } catch (prefErr) {
-            console.error('선호도 데이터 로딩 중 오류:', prefErr);
+          } catch (error) {
+            console.error('선호도 데이터 로딩 오류:', error);
           }
           
+          // 역량진단 데이터 로드 함수 호출
+          await loadCompetencyData(result.data);
+          
+          // 최종 데이터 설정
           setData(result.data);
         } else {
           setError(result.message || '데이터를 불러오는데 실패했습니다.');
         }
-      } catch (err) {
+      } catch (error) {
         setError('데이터를 불러오는 중 오류가 발생했습니다.');
-        console.error('Error fetching result data:', err);
+        console.error('데이터 로딩 오류:', error);
       } finally {
         setLoading(false);
       }
+    };
+    
+    // 역량진단 데이터를 로드하는 별도 함수
+    const loadCompetencyData = async (resultData: ResultData) => {
+      console.log(`===== 역량진단 데이터 로드 시작 =====`);
+      console.log(`ID: ${id}`);
+      
+      try {
+        const url = `/api/individuals-result/${id}/competency`;
+        console.log(`역량진단 API URL: ${url}`);
+        
+        // API 요청 수행
+        const response = await fetch(url);
+        console.log(`역량진단 API 응답 상태: ${response.status} ${response.statusText}`);
+        
+        // 응답 처리
+        if (response.ok) {
+          // 응답 텍스트 확인
+          const responseText = await response.text();
+          console.log(`역량진단 API 응답 텍스트:`, responseText);
+          
+          try {
+            // JSON 파싱
+            const data = JSON.parse(responseText);
+            console.log(`역량진단 API 응답 파싱 성공:`, data);
+            
+            if (data.success) {
+              resultData.talentList = data.data.talentList;
+              resultData.talentDetails = data.data.talentDetails;
+              console.log(`역량진단 데이터 설정 완료:`, {
+                talentList: resultData.talentList,
+                talentDetailsCount: resultData.talentDetails?.length || 0
+              });
+            } else {
+              console.error(`역량진단 API 성공 플래그 false:`, data.message);
+            }
+          } catch (jsonError) {
+            console.error(`역량진단 API 응답 JSON 파싱 오류:`, jsonError);
+          }
+        } else {
+          console.error(`역량진단 API 호출 실패: ${response.status}`);
+        }
+      } catch (error) {
+        console.error(`역량진단 데이터 로드 중 오류 발생:`, error);
+      }
+      
+      console.log(`===== 역량진단 데이터 로드 종료 =====`);
     };
     
     fetchData();
@@ -557,7 +617,7 @@ export default function IndividualResultPage({ params }: { params: { id: string 
               </TabsTrigger>
               <TabsTrigger value="competency-job" className="flex items-center gap-1 data-[state=active]:bg-white data-[state=active]:text-indigo-700 data-[state=active]:shadow-sm">
                 <GraduationCap className="h-4 w-4" />
-                <span>역량적합직업</span>
+                <span>역량적합직업학과</span>
               </TabsTrigger>
               <TabsTrigger value="learning" className="flex items-center gap-1 data-[state=active]:bg-white data-[state=active]:text-indigo-700 data-[state=active]:shadow-sm">
                 <BookOpen className="h-4 w-4" />
@@ -1189,9 +1249,108 @@ export default function IndividualResultPage({ params }: { params: { id: string 
         </TabsContent>
         
         <TabsContent value="competency">
-          <div className="bg-gray-50 p-6 rounded-lg">
-            <p className="text-center text-gray-500">역량진단 탭은 추후 개발 예정입니다.</p>
-          </div>
+          {loading ? (
+            <div className="grid grid-cols-1 gap-6">
+              <Skeleton className="h-[300px] w-full" />
+              <Skeleton className="h-[200px] w-full" />
+            </div>
+          ) : error ? (
+            <div className="bg-red-50 p-4 rounded-lg text-red-800">
+              <p>{error}</p>
+            </div>
+          ) : !data?.talentDetails || data.talentDetails.length === 0 ? (
+            <div className="bg-gray-50 p-6 rounded-lg flex flex-col gap-4">
+              <p className="text-center text-gray-500">역량진단 데이터를 불러올 수 없습니다.</p>
+              
+              {/* 디버깅 정보 */}
+              <div className="bg-yellow-50 p-3 rounded-lg border border-yellow-300 text-sm">
+                <p className="font-semibold text-yellow-800">디버깅 정보:</p>
+                <p>데이터 상태: {data ? '데이터 있음' : '데이터 없음'}</p>
+                <p>talentList: {data?.talentList ? '있음' : '없음'}</p>
+                <p>talentDetails: {data?.talentDetails ? `있음 (${data.talentDetails.length}개)` : '없음'}</p>
+                {data && (
+                  <div className="mt-2">
+                    <p className="font-semibold">데이터 구조:</p>
+                    <pre className="bg-gray-100 p-2 rounded text-xs overflow-auto max-h-40">
+                      {JSON.stringify(data, null, 2)}
+                    </pre>
+                  </div>
+                )}
+              </div>
+              
+              {/* API 직접 테스트 버튼 */}
+              <div className="flex flex-col gap-2 mt-4">
+                <Button 
+                  onClick={async () => {
+                    try {
+                      console.log(`테스트 버튼: 역량진단 API 직접 호출 시작...`);
+                      const response = await fetch(`/api/individuals-result/${id}/competency`);
+                      console.log(`테스트 버튼: API 응답 상태 - ${response.status} ${response.statusText}`);
+                      
+                      const text = await response.text();
+                      console.log(`테스트 버튼: API 응답 텍스트 - ${text}`);
+                      
+                      try {
+                        const json = JSON.parse(text);
+                        console.log(`테스트 버튼: API 응답 JSON - `, json);
+                        
+                        if (json.success && json.data) {
+                          alert(`API 호출 성공! 데이터: ${json.data.talentDetails?.length || 0}개 항목 조회됨`);
+                        } else {
+                          alert(`API 호출 실패: ${json.message || '알 수 없는 오류'}`);
+                        }
+                      } catch (e: unknown) {
+                        const error = e as Error;
+                        console.error(`테스트 버튼: JSON 파싱 오류`, error);
+                        alert(`API 응답을 JSON으로 파싱할 수 없습니다: ${error.message}`);
+                      }
+                    } catch (e: unknown) {
+                      const error = e as Error;
+                      console.error(`테스트 버튼: API 호출 중 오류`, error);
+                      alert(`API 호출 중 오류 발생: ${error.message}`);
+                    }
+                  }}
+                  variant="outline"
+                  className="bg-blue-100 hover:bg-blue-200 text-blue-800"
+                >
+                  역량진단 API 직접 테스트
+                </Button>
+                <p className="text-xs text-gray-500 text-center">이 버튼을 클릭하면 역량진단 API를 직접 호출합니다. 개발자 도구 콘솔에서 결과를 확인하세요.</p>
+              </div>
+            </div>
+          ) : (
+            <div className="grid grid-cols-1 gap-6">
+              <div className="text-center">
+                <h2 className="text-2xl font-bold text-gray-800 mb-2">{data?.personalInfo.pname}님</h2>
+                <p className="text-lg font-medium mb-4">옥타그노시스 검사 결과에 따른 역량진단</p>
+              </div>
+              
+              <Card className="overflow-hidden border-none shadow-md hover:shadow-lg transition-all duration-300">
+                <CardHeader className="bg-gradient-to-r from-blue-50 to-blue-600 border-b border-blue-100 py-3">
+                  <CardTitle className="text-lg text-blue-800">상위 5개 역량</CardTitle>
+                </CardHeader>
+                <CardContent className="pt-4 bg-white">
+                  <div className="p-4 bg-blue-50 rounded-lg mb-4">
+                    <p className="text-gray-700 text-center font-medium">
+                      {data.talentList}
+                    </p>
+                  </div>
+                  
+                  {data.talentDetails?.map((talent, index) => (
+                    <div key={index} className="mb-4 border rounded-lg overflow-hidden">
+                      <div className="bg-blue-100 p-3 flex justify-between items-center">
+                        <h3 className="font-semibold">{talent.qua_name}</h3>
+                        <Badge variant="outline" className="bg-blue-50">{talent.tscore}점</Badge>
+                      </div>
+                      <div className="p-4">
+                        <p className="text-gray-700 text-sm whitespace-pre-line">{talent.explain}</p>
+                      </div>
+                    </div>
+                  ))}
+                </CardContent>
+              </Card>
+            </div>
+          )}
         </TabsContent>
         
         <TabsContent value="competency-job">
