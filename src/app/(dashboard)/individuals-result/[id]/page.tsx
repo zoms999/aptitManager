@@ -1253,12 +1253,12 @@ export default function IndividualResultPage({ params }: { params: { id: string 
                     <CardTitle className="text-xl text-rose-800">선호반응 비율</CardTitle>
                   </CardHeader>
                   <CardContent className="pt-6 bg-white">
-                    <div className="h-[300px]">
+                    <div className="h-[100px]">
                       <ResponsiveContainer width="100%" height="100%">
                         <BarChart 
                           data={[{ name: '선호반응율', value: Math.round(data.imagePreference.irate) }]}
                           layout="vertical"
-                          margin={{ top: 20, right: 30, left: 40, bottom: 20 }}
+                          margin={{ top: 5, right: 30, left: 40, bottom: 5 }}
                         >
                           <CartesianGrid strokeDasharray="3 3" />
                           <XAxis type="number" domain={[0, 100]} />
@@ -1271,7 +1271,7 @@ export default function IndividualResultPage({ params }: { params: { id: string 
                     </div>
                     
                     {/* 차트 레전드 및 데이터 표시 */}
-                    <div className="mt-6 text-center">
+                    <div className="mt-3 text-center">
                       <div className="inline-flex items-center justify-center bg-gray-50 px-4 py-2 rounded-lg">
                         <div className="text-sm">
                           <p className="text-gray-500">전체 이미지 중 <span className="font-bold text-rose-600">{data.imagePreference.cnt}개</span>의 이미지에 선호 반응을 보였습니다.</p>
@@ -1293,16 +1293,16 @@ export default function IndividualResultPage({ params }: { params: { id: string 
                 <CardContent className="pt-6 bg-white">
                   <div className="grid grid-cols-1 gap-6">
                     {/* 수평 바 차트 */}
-                    <div className="h-[300px]">
+                    <div className="h-[130px]">
                       <ResponsiveContainer width="100%" height="100%">
                         <BarChart
                           layout="vertical"
                           data={getPreferenceBarData()}
                           margin={{
-                            top: 20,
+                            top: 8,
                             right: 30,
                             left: 40,
-                            bottom: 5,
+                            bottom: 8,
                           }}
                         >
                           <CartesianGrid strokeDasharray="3 3" />
