@@ -1293,16 +1293,16 @@ export default function IndividualResultPage({ params }: { params: { id: string 
                 <CardContent className="pt-6 bg-white">
                   <div className="grid grid-cols-1 gap-6">
                     {/* 수평 바 차트 */}
-                    <div className="h-[130px]">
+                    <div className="h-[180px]">
                       <ResponsiveContainer width="100%" height="100%">
                         <BarChart
                           layout="vertical"
                           data={getPreferenceBarData()}
                           margin={{
-                            top: 8,
+                            top: 10,
                             right: 30,
                             left: 40,
-                            bottom: 8,
+                            bottom: 10,
                           }}
                         >
                           <CartesianGrid strokeDasharray="3 3" />
