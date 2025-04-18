@@ -738,12 +738,12 @@ export default function PrintResultPage({ params }: { params: { id: string } }) 
             <div className="border rounded-lg p-4 mb-6 print-avoid-break">
               <h3 className="text-xl font-semibold mb-4">선호반응 비율</h3>
               
-              <div className="h-[250px]">
+              <div className="h-[125px]">
                 <ResponsiveContainer width="100%" height="100%">
                   <BarChart 
                     data={[{ name: '선호반응율', value: Math.round(data.imagePreference.irate) }]}
                     layout="vertical"
-                    margin={{ top: 20, right: 30, left: 40, bottom: 20 }}
+                    margin={{ top: 10, right: 30, left: 40, bottom: 10 }}
                   >
                     <CartesianGrid strokeDasharray="3 3" />
                     <XAxis type="number" domain={[0, 100]} />
@@ -770,13 +770,13 @@ export default function PrintResultPage({ params }: { params: { id: string } }) 
           <div className="border rounded-lg p-4 mb-6 print-avoid-break">
             <h3 className="text-xl font-semibold mb-4">이미지 선호도 분석 차트</h3>
             
-            <div className="h-[250px] mb-6">
+            <div className="h-[125px] mb-6">
               <ResponsiveContainer width="100%" height="100%">
                 <BarChart
                   layout="vertical"
                   data={getPreferenceBarData()}
                   margin={{
-                    top: 20,
+                    top: 10,
                     right: 30,
                     left: 40,
                     bottom: 5,
