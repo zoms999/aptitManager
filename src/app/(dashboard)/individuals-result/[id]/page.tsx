@@ -133,6 +133,13 @@ interface PreferenceJob {
   majors: string;
 }
 
+interface CompetencyJob {
+  jo_name: string;
+  jo_outline: string;
+  jo_mainbusiness: string;
+  majors: string;
+}
+
 interface ResultData {
   personalInfo: PersonalInfo;
   tendency: Tendency;
@@ -157,6 +164,7 @@ interface ResultData {
   pd_kind?: string;
   talentList?: string;
   talentDetails?: TalentDetail[];
+  competencyJobs?: CompetencyJob[]; // 역량적합직업학과 데이터 추가
 }
 
 interface TalentDetail {
@@ -202,6 +210,9 @@ export default function IndividualResultPage({ params }: { params: { id: string 
           
           // 역량진단 데이터 로드 함수 호출
           await loadCompetencyData(result.data);
+          
+          // 역량적합직업학과 데이터 로드 함수 호출
+          await loadCompetencyJobData(result.data);
           
           // 최종 데이터 설정
           setData(result.data);
@@ -261,6 +272,42 @@ export default function IndividualResultPage({ params }: { params: { id: string 
       }
       
       console.log(`===== 역량진단 데이터 로드 종료 =====`);
+    };
+    
+    // 역량적합직업학과 데이터를 로드하는 함수
+    const loadCompetencyJobData = async (resultData: ResultData) => {
+      console.log(`===== 역량적합직업학과 데이터 로드 시작 =====`);
+      console.log(`ID: ${id}`);
+      
+      try {
+        const url = `/api/individuals-result/${id}/competency-job`;
+        console.log(`역량적합직업학과 API URL: ${url}`);
+        
+        // API 요청 수행
+        const response = await fetch(url);
+        console.log(`역량적합직업학과 API 응답 상태: ${response.status} ${response.statusText}`);
+        
+        // 응답 처리
+        if (response.ok) {
+          const data = await response.json();
+          console.log(`역량적합직업학과 API 응답:`, data);
+          
+          if (data.success) {
+            resultData.competencyJobs = data.data;
+            console.log(`역량적합직업학과 데이터 설정 완료:`, {
+              jobsCount: resultData.competencyJobs?.length || 0
+            });
+          } else {
+            console.error(`역량적합직업학과 API 성공 플래그 false:`, data.message);
+          }
+        } else {
+          console.error(`역량적합직업학과 API 호출 실패: ${response.status}`);
+        }
+      } catch (error) {
+        console.error(`역량적합직업학과 데이터 로드 중 오류 발생:`, error);
+      }
+      
+      console.log(`===== 역량적합직업학과 데이터 로드 종료 =====`);
     };
     
     fetchData();
@@ -1354,9 +1401,148 @@ export default function IndividualResultPage({ params }: { params: { id: string 
         </TabsContent>
         
         <TabsContent value="competency-job">
-          <div className="bg-gray-50 p-6 rounded-lg">
-            <p className="text-center text-gray-500">역량적합직업학과 탭은 추후 개발 예정입니다.</p>
-          </div>
+          {loading ? (
+            <div className="grid grid-cols-1 gap-6">
+              <Skeleton className="h-[300px] w-full" />
+              <Skeleton className="h-[400px] w-full" />
+            </div>
+          ) : error ? (
+            <div className="bg-red-50 p-4 rounded-lg text-red-800">
+              <p>{error}</p>
+            </div>
+          ) : !data?.competencyJobs || data.competencyJobs.length === 0 ? (
+            <div className="bg-gray-50 p-6 rounded-lg flex flex-col gap-4">
+              <p className="text-center text-gray-500">역량적합직업학과 데이터를 불러올 수 없습니다.</p>
+              
+              {/* 디버깅 정보 */}
+              <div className="bg-yellow-50 p-3 rounded-lg border border-yellow-300 text-sm">
+                <p className="font-semibold text-yellow-800">디버깅 정보:</p>
+                <p>데이터 상태: {data ? '데이터 있음' : '데이터 없음'}</p>
+                <p>competencyJobs: {data?.competencyJobs ? `있음 (${data.competencyJobs.length}개)` : '없음'}</p>
+                {data && (
+                  <div className="mt-2">
+                    <p className="font-semibold">데이터 구조:</p>
+                    <pre className="bg-gray-100 p-2 rounded text-xs overflow-auto max-h-40">
+                      {JSON.stringify(data, null, 2)}
+                    </pre>
+                  </div>
+                )}
+              </div>
+              
+              {/* API 직접 테스트 버튼 */}
+              <div className="flex flex-col gap-2 mt-4">
+                <Button 
+                  onClick={async () => {
+                    try {
+                      console.log(`테스트 버튼: 역량적합직업학과 API 직접 호출 시작...`);
+                      const response = await fetch(`/api/individuals-result/${id}/competency-job`);
+                      console.log(`테스트 버튼: API 응답 상태 - ${response.status} ${response.statusText}`);
+                      
+                      const text = await response.text();
+                      console.log(`테스트 버튼: API 응답 텍스트 - ${text}`);
+                      
+                      try {
+                        const json = JSON.parse(text);
+                        console.log(`테스트 버튼: API 응답 JSON - `, json);
+                        
+                        if (json.success && json.data) {
+                          alert(`API 호출 성공! 데이터: ${json.data.length || 0}개 항목 조회됨`);
+                        } else {
+                          alert(`API 호출 실패: ${json.message || '알 수 없는 오류'}`);
+                        }
+                      } catch (e: unknown) {
+                        const error = e as Error;
+                        console.error(`테스트 버튼: JSON 파싱 오류`, error);
+                        alert(`API 응답을 JSON으로 파싱할 수 없습니다: ${error.message}`);
+                      }
+                    } catch (e: unknown) {
+                      const error = e as Error;
+                      console.error(`테스트 버튼: API 호출 중 오류`, error);
+                      alert(`API 호출 중 오류 발생: ${error.message}`);
+                    }
+                  }}
+                  variant="outline"
+                  className="bg-blue-100 hover:bg-blue-200 text-blue-800"
+                >
+                  역량적합직업학과 API 직접 테스트
+                </Button>
+                <p className="text-xs text-gray-500 text-center">이 버튼을 클릭하면 역량적합직업학과 API를 직접 호출합니다. 개발자 도구 콘솔에서 결과를 확인하세요.</p>
+              </div>
+            </div>
+          ) : (
+            <div className="grid grid-cols-1 gap-6">
+              <div className="text-center">
+                <h2 className="text-2xl font-bold text-gray-800 mb-2">{data?.personalInfo.pname}님</h2>
+                <p className="text-lg font-medium mb-4">역량에 적합한 직업과 학과 추천</p>
+              </div>
+              
+              <Card className="mb-4">
+                <CardContent className="p-6 bg-indigo-50">
+                  <p className="text-gray-700 text-center">역량진단 결과를 바탕으로 {data?.personalInfo.pname}님에게 적합한 직업과 학과를 추천해드립니다.</p>
+                </CardContent>
+              </Card>
+              
+              <Card className="overflow-hidden border-none shadow-md hover:shadow-lg transition-all duration-300">
+                <CardHeader className="bg-gradient-to-r from-indigo-600 via-indigo-700 to-indigo-800 border-b border-indigo-100 py-3">
+                  <CardTitle className="text-lg text-white">역량 기반 추천 직업</CardTitle>
+                </CardHeader>
+                <CardContent className="pt-4 bg-white">
+                  {data.competencyJobs.map((job, index) => (
+                    <div key={`job-${index}`} className="mb-8 last:mb-0 group">
+                      <div className="bg-gradient-to-r from-indigo-100 to-blue-100 rounded-t-lg p-2 flex items-center">
+                        <div className="bg-indigo-600 text-white rounded-full w-8 h-8 flex items-center justify-center mr-3 shadow-md">
+                          <span className="font-bold">{index + 1}</span>
+                        </div>
+                        <h3 className="text-sm font-medium text-indigo-900">추천{index + 1} {job.jo_name}</h3>
+                      </div>
+                      
+                      <div className="bg-white border-2 border-t-0 border-indigo-100 rounded-b-lg p-5 transition-all shadow-sm group-hover:shadow-md">
+                        <div className="grid grid-cols-1 md:grid-cols-2 gap-5">
+                          <div className="space-y-3">
+                            <h4 className="font-bold text-indigo-800 flex items-center text-sm">
+                              <div className="bg-indigo-100 p-1.5 rounded-full mr-2">
+                                <Briefcase className="h-4 w-4 text-indigo-600" />
+                              </div>
+                              직업개요
+                            </h4>
+                            <p className="text-gray-700 pl-8 text-sm">{job.jo_outline || '정보가 제공되지 않았습니다.'}</p>
+                          </div>
+                          
+                          <div className="space-y-3">
+                            <h4 className="font-bold text-indigo-800 flex items-center text-sm">
+                              <div className="bg-indigo-100 p-1.5 rounded-full mr-2">
+                                <CheckSquare className="h-4 w-4 text-indigo-600" />
+                              </div>
+                              주요업무
+                            </h4>
+                            <p className="text-gray-700 pl-8 whitespace-pre-line text-sm">{job.jo_mainbusiness || '정보가 제공되지 않았습니다.'}</p>
+                          </div>
+                        </div>
+                        
+                        {/* 관련 학과 정보 */}
+                        <div className="mt-4 pt-4 border-t border-gray-200">
+                          <h4 className="font-bold text-indigo-800 flex items-center text-sm">
+                            <div className="bg-indigo-100 p-1.5 rounded-full mr-2">
+                              <GraduationCap className="h-4 w-4 text-indigo-600" />
+                            </div>
+                            관련학과
+                          </h4>
+                          <p className="text-gray-700 pl-8 mt-2 text-sm">{job.majors || '관련 학과 정보가 없습니다.'}</p>
+                        </div>
+                      </div>
+                    </div>
+                  ))}
+                </CardContent>
+              </Card>
+              
+              <div className="bg-blue-50 p-6 rounded-lg text-center mt-4">
+                <p className="text-gray-700">
+                  위 직업은 {data?.personalInfo.pname}님의 역량진단 결과를 바탕으로 선별된 직업입니다.
+                  <br />더 자세한 정보는 커리어 전문가와 상담해보세요.
+                </p>
+              </div>
+            </div>
+          )}
         </TabsContent>
         
         <TabsContent value="learning">
