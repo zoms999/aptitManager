@@ -322,6 +322,11 @@ export default function IndividualResultPage({ params }: { params: { id: string 
     try {
       setPdfLoading(true);
       
+      // pd_kind가 basic인 경우 사고력 섹션을 제외
+      const sections = data.pd_kind === 'basic' 
+        ? ['personal', 'tendency', 'analysis', 'suitable-job', 'preference']
+        : ['personal', 'tendency', 'analysis', 'thinking', 'suitable-job', 'preference'];
+      
       // API 호출하여 PDF 보고서 생성 요청
       const response = await fetch(`/api/individuals-result/${id}/pdf`, {
         method: 'POST',
@@ -330,7 +335,7 @@ export default function IndividualResultPage({ params }: { params: { id: string 
         },
         body: JSON.stringify({
           // 필요한 데이터 선택
-          sections: ['personal', 'tendency', 'analysis', 'thinking', 'suitable-job', 'preference'],
+          sections,
           options: {
             layout: 'premium', // 고급 레이아웃 사용
             includeCharts: true, // 차트 포함
@@ -353,7 +358,8 @@ export default function IndividualResultPage({ params }: { params: { id: string 
             preferenceData: data.preferenceData,
             thinkingMain: data.thinkingMain,
             thinkingScore: data.thinkingScore,
-            thinkingDetails: data.thinkingDetails
+            thinkingDetails: data.thinkingDetails,
+            pd_kind: data.pd_kind
           }
         }),
       });
