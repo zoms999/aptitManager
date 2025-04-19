@@ -27,7 +27,8 @@ import {
 import { LearningHeader } from '@/components/learning/LearningHeader';
 import { LearningStyle } from '@/components/learning/LearningStyle';
 import { StudyMethod } from '@/components/learning/StudyMethod';
-import { DonutChart } from '@/components/learning/DonutChart';
+// DonutChart는 LearningStyle, StudyMethod 컴포넌트 내에서 사용됨
+// import { DonutChart } from '@/components/learning/DonutChart';
 
 interface PersonalInfo {
   id: string;

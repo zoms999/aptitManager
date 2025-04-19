@@ -50,7 +50,10 @@ export async function GET(
       SELECT 
           sr.sw_kindname AS sname,
           CAST(sr.sw_rate * 100 AS INT) AS srate,
-          sr.sw_color AS scolor
+          CASE
+            WHEN sr.sw_color LIKE '#%' THEN sr.sw_color
+            ELSE REPLACE(REPLACE(sr.sw_color, 'rgb(', 'rgba('), ')', ', 0.8)')
+          END AS scolor
       FROM mwd_resval rv
       JOIN mwd_studyway_rate sr ON sr.qua_code = rv.rv_tnd1
       WHERE rv.anp_seq = $1
@@ -63,7 +66,10 @@ export async function GET(
       SELECT 
           sr.sw_kindname AS sname,
           CAST(sr.sw_rate * 100 AS INT) AS srate,
-          sr.sw_color AS scolor
+          CASE
+            WHEN sr.sw_color LIKE '#%' THEN sr.sw_color
+            ELSE REPLACE(REPLACE(sr.sw_color, 'rgb(', 'rgba('), ')', ', 0.8)')
+          END AS scolor
       FROM mwd_resval rv
       JOIN mwd_studyway_rate sr ON sr.qua_code = rv.rv_tnd2
       WHERE rv.anp_seq = $1
@@ -76,7 +82,10 @@ export async function GET(
       SELECT 
           sr.sw_kindname AS sname,
           CAST(sr.sw_rate * 100 AS INT) AS srate,
-          sr.sw_color AS scolor
+          CASE
+            WHEN sr.sw_color LIKE '#%' THEN sr.sw_color
+            ELSE REPLACE(REPLACE(sr.sw_color, 'rgb(', 'rgba('), ')', ', 0.8)')
+          END AS scolor
       FROM mwd_resval rv
       JOIN mwd_studyway_rate sr ON sr.qua_code = rv.rv_tnd1
       WHERE rv.anp_seq = $1
@@ -89,7 +98,10 @@ export async function GET(
       SELECT 
           sr.sw_kindname AS sname,
           CAST(sr.sw_rate * 100 AS INT) AS srate,
-          sr.sw_color AS scolor
+          CASE
+            WHEN sr.sw_color LIKE '#%' THEN sr.sw_color
+            ELSE REPLACE(REPLACE(sr.sw_color, 'rgb(', 'rgba('), ')', ', 0.8)')
+          END AS scolor
       FROM mwd_resval rv
       JOIN mwd_studyway_rate sr ON sr.qua_code = rv.rv_tnd2
       WHERE rv.anp_seq = $1

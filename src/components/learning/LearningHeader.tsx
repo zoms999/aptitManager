@@ -8,9 +8,9 @@ interface LearningHeaderProps {
 
 export const LearningHeader: React.FC<LearningHeaderProps> = ({ username }) => {
   return (
-    <div className="mb-6">
-      <h2 className="text-2xl font-bold mb-2">{username} 님</h2>
-      <p className="text-gray-700 mb-1">
+    <div className="mb-8 text-center mx-auto max-w-2xl">
+      <h2 className="text-2xl font-bold mb-3">{username} 님</h2>
+      <p className="text-gray-700 mb-2">
         옥타그노시스검사 결과에 따른 학습스타일과 성향에 적합한 학습법입니다.
       </p>
       <p className="text-gray-700">
