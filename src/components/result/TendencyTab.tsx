@@ -35,16 +35,16 @@ export function TendencyTab({ loading, error, data }: TendencyTabProps) {
   if (loading) {
     return (
       <div className="grid grid-cols-1 gap-6">
-        <Skeleton className="h-[200px] w-full" />
-        <Skeleton className="h-[200px] w-full" />
-        <Skeleton className="h-[300px] w-full" />
+        <Skeleton className="h-[200px] w-full rounded-lg" />
+        <Skeleton className="h-[200px] w-full rounded-lg" />
+        <Skeleton className="h-[300px] w-full rounded-lg" />
       </div>
     );
   }
 
   if (error) {
     return (
-      <div className="bg-red-50 p-4 rounded-lg text-red-800">
+      <div className="bg-red-50 p-6 rounded-lg text-red-800">
         <p>{error}</p>
       </div>
     );
@@ -52,38 +52,39 @@ export function TendencyTab({ loading, error, data }: TendencyTabProps) {
 
   return (
     <div className="grid grid-cols-1 gap-6">
-      <div className="text-center">
-        <h2 className="text-2xl font-bold text-gray-800 mb-6">{data?.personalInfo.pname}님</h2>
-        <p className="text-lg font-medium">옥타그노시스 검사 결과에 따른 성향진단 결과</p>
+      <div className="text-center mb-4">
+        <h2 className="text-2xl font-bold text-gray-800 mb-2">{data?.personalInfo.pname}님</h2>
+        <p className="text-base text-gray-600">옥타그노시스 검사 결과에 따른 성향진단 결과입니다.</p>
       </div>
       
       <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
         {/* 나의 성향 (상위 3개) */}
-        <Card className="overflow-hidden border-none shadow-md hover:shadow-lg transition-all duration-300">
-          <CardHeader className="bg-gradient-to-r from-teal-600 to-teal-500 border-b border-teal-100 py-3">
-            <CardTitle className="text-lg text-white">나의 성향</CardTitle>
+        <Card className="border border-gray-200 rounded-lg shadow-sm">
+          <CardHeader className="bg-teal-50 border-b border-teal-100 py-3">
+            <CardTitle className="text-base font-medium text-teal-800">나의 성향</CardTitle>
           </CardHeader>
-          <CardContent className="pt-4 bg-white">
+          <CardContent className="pt-4 px-4 pb-4">
             {data?.topTendencies?.map((item, index) => {
               const explain = data?.topTendencyExplains?.find(e => e.rank === item.rank);
               const isExpanded = expandedTop.includes(item.rank);
               
               return (
-                <div key={`top-${index}`} className="mb-4 last:mb-0">
-                  <div className="flex items-center mb-2 bg-teal-500 text-white p-3">
-                    <span className="font-bold mr-2">상위 {item.rank}성향</span>
-                  </div>
-                  <div className="border-2 border-gray-200">
-                    <div className="p-3 flex justify-between items-center cursor-pointer" onClick={() => toggleTopExpand(item.rank)}>
-                      <span className="text-lg font-medium">{item.tendency_name}</span>
-                      <Button variant="ghost" size="sm" className="p-0 h-8 w-8">
-                        {isExpanded ? <ChevronUp className="h-5 w-5" /> : <ChevronDown className="h-5 w-5" />}
-                      </Button>
+                <div key={`top-${index}`} className="mb-3 last:mb-0">
+                  <div className="border border-gray-200 rounded-lg overflow-hidden">
+                    <div className="bg-gray-50 p-3 border-b border-gray-200">
+                      <div className="flex justify-between items-center">
+                        <span className="font-medium text-gray-700">상위 {item.rank}성향: {item.tendency_name}</span>
+                        <Button variant="ghost" size="sm" className="p-0 h-8 w-8 text-gray-500"
+                          onClick={() => toggleTopExpand(item.rank)}
+                        >
+                          {isExpanded ? <ChevronUp className="h-4 w-4" /> : <ChevronDown className="h-4 w-4" />}
+                        </Button>
+                      </div>
                     </div>
                     
                     {isExpanded && explain && (
-                      <div className="p-4 bg-gray-50 border-t-2 border-gray-200">
-                        <p className="text-gray-700 whitespace-pre-line">{explain.explanation}</p>
+                      <div className="p-4">
+                        <p className="text-gray-700 text-sm leading-relaxed">{explain.explanation}</p>
                       </div>
                     )}
                   </div>
@@ -94,31 +95,32 @@ export function TendencyTab({ loading, error, data }: TendencyTabProps) {
         </Card>
         
         {/* 나와 잘 안 맞는 성향 (하위 3개) */}
-        <Card className="overflow-hidden border-none shadow-md hover:shadow-lg transition-all duration-300">
-          <CardHeader className="bg-gradient-to-r from-orange-600 to-orange-500 border-b border-orange-100 py-3">
-            <CardTitle className="text-lg text-white">나와 잘 안 맞는 성향</CardTitle>
+        <Card className="border border-gray-200 rounded-lg shadow-sm">
+          <CardHeader className="bg-orange-50 border-b border-orange-100 py-3">
+            <CardTitle className="text-base font-medium text-orange-800">나와 잘 안 맞는 성향</CardTitle>
           </CardHeader>
-          <CardContent className="pt-4 bg-white">
+          <CardContent className="pt-4 px-4 pb-4">
             {data?.bottomTendencies?.map((item, index) => {
               const explain = data?.bottomTendencyExplains?.find(e => e.rank === item.rank);
               const isExpanded = expandedBottom.includes(item.rank);
               
               return (
-                <div key={`bottom-${index}`} className="mb-4 last:mb-0">
-                  <div className="flex items-center mb-2 bg-orange-500 text-white p-3">
-                    <span className="font-bold mr-2">하위 {index + 1}성향</span>
-                  </div>
-                  <div className="border-2 border-gray-200">
-                    <div className="p-3 flex justify-between items-center cursor-pointer" onClick={() => toggleBottomExpand(item.rank)}>
-                      <span className="text-lg font-medium">{item.tendency_name}</span>
-                      <Button variant="ghost" size="sm" className="p-0 h-8 w-8">
-                        {isExpanded ? <ChevronUp className="h-5 w-5" /> : <ChevronDown className="h-5 w-5" />}
-                      </Button>
+                <div key={`bottom-${index}`} className="mb-3 last:mb-0">
+                  <div className="border border-gray-200 rounded-lg overflow-hidden">
+                    <div className="bg-gray-50 p-3 border-b border-gray-200">
+                      <div className="flex justify-between items-center">
+                        <span className="font-medium text-gray-700">하위 {index + 1}성향: {item.tendency_name}</span>
+                        <Button variant="ghost" size="sm" className="p-0 h-8 w-8 text-gray-500"
+                          onClick={() => toggleBottomExpand(item.rank)}
+                        >
+                          {isExpanded ? <ChevronUp className="h-4 w-4" /> : <ChevronDown className="h-4 w-4" />}
+                        </Button>
+                      </div>
                     </div>
                     
                     {isExpanded && explain && (
-                      <div className="p-4 bg-gray-50 border-t-2 border-gray-200">
-                        <p className="text-gray-700 whitespace-pre-line">{explain.explanation}</p>
+                      <div className="p-4">
+                        <p className="text-gray-700 text-sm leading-relaxed">{explain.explanation}</p>
                       </div>
                     )}
                   </div>
@@ -130,119 +132,70 @@ export function TendencyTab({ loading, error, data }: TendencyTabProps) {
       </div>
       
       {/* 설명 카드 */}
-      <Card className="overflow-hidden border-none shadow-md hover:shadow-lg transition-all duration-300">
-        <CardHeader className="bg-gradient-to-r from-slate-700 to-slate-600 border-b border-slate-100 py-3">
-          <CardTitle className="text-lg text-white">성향 정보</CardTitle>
-        </CardHeader>
-        <CardContent className="pt-4 bg-white">
-          <p className="text-gray-700">
+      <Card className="border border-gray-200 rounded-lg shadow-sm">
+        <CardContent className="p-4">
+          <p className="text-gray-600 text-sm">
             나를 이루는 기운이 되는 성향 3개를 진단해드렸습니다. 하위성향은 나와는 잘 안 맞는 성향입니다.
           </p>
         </CardContent>
       </Card>
 
       {/* 성향 정보 카드 */}
-      <Card className="overflow-hidden border-none shadow-md hover:shadow-lg transition-all duration-300">
-        <CardHeader className="bg-gradient-to-r from-blue-50 via-blue-200 to-blue-100 border-b border-blue-100 py-3">
-          <CardTitle className="flex items-center text-lg gap-2 text-blue-800">
-            <div className="bg-white p-2 rounded-full shadow-sm">
-              <Brain className="h-5 w-5 text-blue-600" />
-            </div>
-            성향 정보
-          </CardTitle>
+      <Card className="border border-gray-200 rounded-lg shadow-sm">
+        <CardHeader className="border-b border-gray-200 py-3 flex items-center bg-blue-50">
+          <Brain className="h-4 w-4 text-blue-400 mr-2" />
+          <CardTitle className="text-base font-medium text-blue-600">성향 정보</CardTitle>
         </CardHeader>
-        <CardContent className="pt-4 bg-white">
-          <div className="mb-4">
-            {data?.personalInfo.pname}님의 주요 성향은 <Badge variant="outline" className="font-semibold text-blue-800">{data?.tendency.tnd1}</Badge>과(와) <Badge variant="outline" className="font-semibold text-blue-800">{data?.tendency.tnd2}</Badge>입니다.
-          </div>
+        <CardContent className="p-4">
+          <p className="mb-4 text-sm text-gray-700">
+            {data?.personalInfo.pname}님의 주요 성향은 
+            <Badge variant="outline" className="mx-1 font-medium text-gray-700 bg-gray-50">{data?.tendency.tnd1}</Badge>과(와) 
+            <Badge variant="outline" className="mx-1 font-medium text-gray-700 bg-gray-50">{data?.tendency.tnd2}</Badge>입니다.
+          </p>
           
-          <div className="space-y-6">
-            <div>
-              <h3 className="font-semibold text-lg mb-4 text-slate-800">주요 성향 설명</h3>
+          {data?.topTendencies && data.topTendencies.length > 0 && data?.topTendencyExplains && data.topTendencyExplains.length > 0 && (
+            <div className="space-y-4 mb-6">
+              <h3 className="text-sm font-medium text-gray-800 pb-2 border-b border-gray-200">주요 성향 설명</h3>
               
-              {data?.topTendencies && data.topTendencies.length > 0 && data?.topTendencyExplains && data.topTendencyExplains.length > 0 && (
-                <div className="space-y-6">
-                  {data.topTendencies[0] && (
-                    <div className="p-4 bg-blue-50 rounded-lg">
-                      <h4 className="font-semibold text-md mb-2 text-slate-700">
-                        <Badge className="mr-2 bg-blue-600">상위 1</Badge>
-                        {data.topTendencies[0]?.tendency_name}
-                      </h4>
-                      <p className="text-gray-700">
-                        {data.topTendencyExplains.find(e => e.rank === data.topTendencies[0]?.rank)?.explanation || ''}
-                      </p>
-                    </div>
-                  )}
-                  
-                  {data.topTendencies[1] && (
-                    <div className="p-4 bg-blue-50 rounded-lg">
-                      <h4 className="font-semibold text-md mb-2 text-slate-700">
-                        <Badge className="mr-2 bg-blue-600">상위 2</Badge>
-                        {data.topTendencies[1]?.tendency_name}
-                      </h4>
-                      <p className="text-gray-700">
-                        {data.topTendencyExplains.find(e => e.rank === data.topTendencies[1]?.rank)?.explanation || ''}
-                      </p>
-                    </div>
-                  )}
-                  
-                  {data.topTendencies[2] && (
-                    <div className="p-4 bg-blue-50 rounded-lg">
-                      <h4 className="font-semibold text-md mb-2 text-slate-700">
-                        <Badge className="mr-2 bg-blue-600">상위 3</Badge>
-                        {data.topTendencies[2]?.tendency_name}
-                      </h4>
-                      <p className="text-gray-700">
-                        {data.topTendencyExplains.find(e => e.rank === data.topTendencies[2]?.rank)?.explanation || ''}
-                      </p>
-                    </div>
-                  )}
-                </div>
-              )}
-              
-              {data?.bottomTendencies && data.bottomTendencies.length > 0 && data?.bottomTendencyExplains && data.bottomTendencyExplains.length > 0 && (
-                <div className="space-y-6 mt-6">
-                  <h3 className="font-semibold text-lg mb-4 text-slate-800">나와 잘 안 맞는 성향 설명</h3>
-                  
-                  {data.bottomTendencies[0] && (
-                    <div className="p-4 bg-orange-50 rounded-lg">
-                      <h4 className="font-semibold text-md mb-2 text-slate-700">
-                        <Badge className="mr-2 bg-orange-600">하위 1</Badge>
-                        {data.bottomTendencies[0]?.tendency_name}
-                      </h4>
-                      <p className="text-gray-700">
-                        {data.bottomTendencyExplains.find(e => e.rank === data.bottomTendencies[0]?.rank)?.explanation || ''}
-                      </p>
-                    </div>
-                  )}
-                  
-                  {data.bottomTendencies[1] && (
-                    <div className="p-4 bg-orange-50 rounded-lg">
-                      <h4 className="font-semibold text-md mb-2 text-slate-700">
-                        <Badge className="mr-2 bg-orange-600">하위 2</Badge>
-                        {data.bottomTendencies[1]?.tendency_name}
-                      </h4>
-                      <p className="text-gray-700">
-                        {data.bottomTendencyExplains.find(e => e.rank === data.bottomTendencies[1]?.rank)?.explanation || ''}
-                      </p>
-                    </div>
-                  )}
-                  
-                  {data.bottomTendencies[2] && (
-                    <div className="p-4 bg-orange-50 rounded-lg">
-                      <h4 className="font-semibold text-md mb-2 text-slate-700">
-                        <Badge className="mr-2 bg-orange-600">하위 3</Badge>
-                        {data.bottomTendencies[2]?.tendency_name}
-                      </h4>
-                      <p className="text-gray-700">
-                        {data.bottomTendencyExplains.find(e => e.rank === data.bottomTendencies[2]?.rank)?.explanation || ''}
-                      </p>
-                    </div>
-                  )}
-                </div>
-              )}
+              {data.topTendencies.map((item, index) => {
+                const explain = data.topTendencyExplains.find(e => e.rank === item.rank);
+                
+                return (
+                  <div key={`top-explain-${index}`} className="p-3 bg-gray-50 border border-gray-200 rounded-lg">
+                    <h4 className="text-sm font-medium text-gray-700 mb-2">
+                      <Badge variant="secondary" className="mr-2">상위 {index + 1}</Badge>
+                      {item.tendency_name}
+                    </h4>
+                    <p className="text-xs text-gray-700 leading-relaxed">
+                      {explain?.explanation || ''}
+                    </p>
+                  </div>
+                );
+              })}
             </div>
-          </div>
+          )}
+          
+          {data?.bottomTendencies && data.bottomTendencies.length > 0 && data?.bottomTendencyExplains && data.bottomTendencyExplains.length > 0 && (
+            <div className="space-y-4">
+              <h3 className="text-sm font-medium text-gray-800 pb-2 border-b border-gray-200">나와 잘 안 맞는 성향 설명</h3>
+              
+              {data.bottomTendencies.map((item, index) => {
+                const explain = data.bottomTendencyExplains.find(e => e.rank === item.rank);
+                
+                return (
+                  <div key={`bottom-explain-${index}`} className="p-3 bg-gray-50 border border-gray-200 rounded-lg">
+                    <h4 className="text-sm font-medium text-gray-700 mb-2">
+                      <Badge variant="outline" className="mr-2">하위 {index + 1}</Badge>
+                      {item.tendency_name}
+                    </h4>
+                    <p className="text-xs text-gray-700 leading-relaxed">
+                      {explain?.explanation || ''}
+                    </p>
+                  </div>
+                );
+              })}
+            </div>
+          )}
         </CardContent>
       </Card>
     </div>
