@@ -24,6 +24,10 @@ import {
   PolarRadiusAxis,
   Radar
 } from 'recharts';
+import { LearningHeader } from '@/components/learning/LearningHeader';
+import { LearningStyle } from '@/components/learning/LearningStyle';
+import { StudyMethod } from '@/components/learning/StudyMethod';
+import { DonutChart } from '@/components/learning/DonutChart';
 
 interface PersonalInfo {
   id: string;
@@ -173,6 +177,32 @@ interface TalentDetail {
   explain: string;
 }
 
+// 학습 데이터 타입 정의
+interface LearningStyleData {
+  tnd1: string;
+  tnd1_study: string;
+  tnd1_way: string;
+  tnd2: string;
+  tnd2_study: string;
+  tnd2_way: string;
+  tndrow: number;
+  tndcol: number;
+}
+
+interface ChartData {
+  sname: string;
+  srate: number;
+  scolor: string;
+}
+
+interface LearningData {
+  style: LearningStyleData;
+  style1Chart: ChartData[];
+  style2Chart: ChartData[];
+  method1Chart: ChartData[];
+  method2Chart: ChartData[];
+}
+
 export default function IndividualResultPage({ params }: { params: { id: string } }) {
   const router = useRouter();
   const { id } = params;
@@ -183,7 +213,112 @@ export default function IndividualResultPage({ params }: { params: { id: string 
   const [expandedTop, setExpandedTop] = useState<number[]>([]);
   const [expandedBottom, setExpandedBottom] = useState<number[]>([]);
   const [pdfLoading, setPdfLoading] = useState(false);
+  const [learningData, setLearningData] = useState<LearningData | null>(null);
+  const [learningLoading, setLearningLoading] = useState(false);
   
+  // 역량진단 데이터를 로드하는 별도 함수
+  const loadCompetencyData = async (resultData: ResultData) => {
+    console.log(`===== 역량진단 데이터 로드 시작 =====`);
+    console.log(`ID: ${id}`);
+    
+    try {
+      const url = `/api/individuals-result/${id}/competency`;
+      console.log(`역량진단 API URL: ${url}`);
+      
+      // API 요청 수행
+      const response = await fetch(url);
+      console.log(`역량진단 API 응답 상태: ${response.status} ${response.statusText}`);
+      
+      // 응답 처리
+      if (response.ok) {
+        // 응답 텍스트 확인
+        const responseText = await response.text();
+        console.log(`역량진단 API 응답 텍스트:`, responseText);
+        
+        try {
+          // JSON 파싱
+          const data = JSON.parse(responseText);
+          console.log(`역량진단 API 응답 파싱 성공:`, data);
+          
+          if (data.success) {
+            resultData.talentList = data.data.talentList;
+            resultData.talentDetails = data.data.talentDetails;
+            console.log(`역량진단 데이터 설정 완료:`, {
+              talentList: resultData.talentList,
+              talentDetailsCount: resultData.talentDetails?.length || 0
+            });
+          } else {
+            console.error(`역량진단 API 성공 플래그 false:`, data.message);
+          }
+        } catch (jsonError) {
+          console.error(`역량진단 API 응답 JSON 파싱 오류:`, jsonError);
+        }
+      } else {
+        console.error(`역량진단 API 호출 실패: ${response.status}`);
+      }
+    } catch (error) {
+      console.error(`역량진단 데이터 로드 중 오류 발생:`, error);
+    }
+    
+    console.log(`===== 역량진단 데이터 로드 종료 =====`);
+  };
+  
+  // 역량적합직업학과 데이터를 로드하는 함수
+  const loadCompetencyJobData = async (resultData: ResultData) => {
+    console.log(`===== 역량적합직업학과 데이터 로드 시작 =====`);
+    console.log(`ID: ${id}`);
+    
+    try {
+      const url = `/api/individuals-result/${id}/competency-job`;
+      console.log(`역량적합직업학과 API URL: ${url}`);
+      
+      // API 요청 수행
+      const response = await fetch(url);
+      console.log(`역량적합직업학과 API 응답 상태: ${response.status} ${response.statusText}`);
+      
+      // 응답 처리
+      if (response.ok) {
+        const data = await response.json();
+        console.log(`역량적합직업학과 API 응답:`, data);
+        
+        if (data.success) {
+          resultData.competencyJobs = data.data;
+          console.log(`역량적합직업학과 데이터 설정 완료:`, {
+            jobsCount: resultData.competencyJobs?.length || 0
+          });
+        } else {
+          console.error(`역량적합직업학과 API 성공 플래그 false:`, data.message);
+        }
+      } else {
+        console.error(`역량적합직업학과 API 호출 실패: ${response.status}`);
+      }
+    } catch (error) {
+      console.error(`역량적합직업학과 데이터 로드 중 오류 발생:`, error);
+    }
+    
+    console.log(`===== 역량적합직업학과 데이터 로드 종료 =====`);
+  };
+  
+  // 학습 데이터 로드 함수 추가
+  const loadLearningData = async () => {
+    try {
+      setLearningLoading(true);
+      const response = await fetch(`/api/individuals-result/${id}/learning`);
+      const result = await response.json();
+      
+      if (result.success) {
+        setLearningData(result.data);
+      } else {
+        console.error('학습 데이터 로드 실패:', result.error);
+      }
+    } catch (error) {
+      console.error('학습 데이터 로드 중 오류 발생:', error);
+    } finally {
+      setLearningLoading(false);
+    }
+  };
+  
+  // 메인 데이터 로드 useEffect
   useEffect(() => {
     const fetchData = async () => {
       try {
@@ -214,6 +349,11 @@ export default function IndividualResultPage({ params }: { params: { id: string 
           // 역량적합직업학과 데이터 로드 함수 호출
           await loadCompetencyJobData(result.data);
           
+          // basic이 아닌 경우 학습 데이터 로드
+          if (result.data.pd_kind !== 'basic') {
+            await loadLearningData();
+          }
+          
           // 최종 데이터 설정
           setData(result.data);
         } else {
@@ -225,89 +365,6 @@ export default function IndividualResultPage({ params }: { params: { id: string 
       } finally {
         setLoading(false);
       }
-    };
-    
-    // 역량진단 데이터를 로드하는 별도 함수
-    const loadCompetencyData = async (resultData: ResultData) => {
-      console.log(`===== 역량진단 데이터 로드 시작 =====`);
-      console.log(`ID: ${id}`);
-      
-      try {
-        const url = `/api/individuals-result/${id}/competency`;
-        console.log(`역량진단 API URL: ${url}`);
-        
-        // API 요청 수행
-        const response = await fetch(url);
-        console.log(`역량진단 API 응답 상태: ${response.status} ${response.statusText}`);
-        
-        // 응답 처리
-        if (response.ok) {
-          // 응답 텍스트 확인
-          const responseText = await response.text();
-          console.log(`역량진단 API 응답 텍스트:`, responseText);
-          
-          try {
-            // JSON 파싱
-            const data = JSON.parse(responseText);
-            console.log(`역량진단 API 응답 파싱 성공:`, data);
-            
-            if (data.success) {
-              resultData.talentList = data.data.talentList;
-              resultData.talentDetails = data.data.talentDetails;
-              console.log(`역량진단 데이터 설정 완료:`, {
-                talentList: resultData.talentList,
-                talentDetailsCount: resultData.talentDetails?.length || 0
-              });
-            } else {
-              console.error(`역량진단 API 성공 플래그 false:`, data.message);
-            }
-          } catch (jsonError) {
-            console.error(`역량진단 API 응답 JSON 파싱 오류:`, jsonError);
-          }
-        } else {
-          console.error(`역량진단 API 호출 실패: ${response.status}`);
-        }
-      } catch (error) {
-        console.error(`역량진단 데이터 로드 중 오류 발생:`, error);
-      }
-      
-      console.log(`===== 역량진단 데이터 로드 종료 =====`);
-    };
-    
-    // 역량적합직업학과 데이터를 로드하는 함수
-    const loadCompetencyJobData = async (resultData: ResultData) => {
-      console.log(`===== 역량적합직업학과 데이터 로드 시작 =====`);
-      console.log(`ID: ${id}`);
-      
-      try {
-        const url = `/api/individuals-result/${id}/competency-job`;
-        console.log(`역량적합직업학과 API URL: ${url}`);
-        
-        // API 요청 수행
-        const response = await fetch(url);
-        console.log(`역량적합직업학과 API 응답 상태: ${response.status} ${response.statusText}`);
-        
-        // 응답 처리
-        if (response.ok) {
-          const data = await response.json();
-          console.log(`역량적합직업학과 API 응답:`, data);
-          
-          if (data.success) {
-            resultData.competencyJobs = data.data;
-            console.log(`역량적합직업학과 데이터 설정 완료:`, {
-              jobsCount: resultData.competencyJobs?.length || 0
-            });
-          } else {
-            console.error(`역량적합직업학과 API 성공 플래그 false:`, data.message);
-          }
-        } else {
-          console.error(`역량적합직업학과 API 호출 실패: ${response.status}`);
-        }
-      } catch (error) {
-        console.error(`역량적합직업학과 데이터 로드 중 오류 발생:`, error);
-      }
-      
-      console.log(`===== 역량적합직업학과 데이터 로드 종료 =====`);
     };
     
     fetchData();
@@ -334,10 +391,10 @@ export default function IndividualResultPage({ params }: { params: { id: string 
     window.open(`${baseUrl}/print/${id}`, '_blank', windowFeatures);
   };
   
-  // 성향 설명 토글
+  // 상위 성향 확장 토글 함수
   const toggleTopExpand = (rank: number) => {
     if (expandedTop.includes(rank)) {
-      setExpandedTop(expandedTop.filter(r => r !== rank));
+      setExpandedTop(expandedTop.filter((r) => r !== rank));
     } else {
       setExpandedTop([...expandedTop, rank]);
     }
@@ -1546,9 +1603,72 @@ export default function IndividualResultPage({ params }: { params: { id: string 
         </TabsContent>
         
         <TabsContent value="learning">
-          <div className="bg-gray-50 p-6 rounded-lg">
-            <p className="text-center text-gray-500">학습 탭은 추후 개발 예정입니다.</p>
-          </div>
+          {loading || learningLoading ? (
+            // 로딩 상태 표시
+            <Card className="overflow-hidden border-none shadow-md hover:shadow-lg transition-all duration-300">
+              <CardHeader className="bg-gradient-to-r from-blue-50 to-blue-600 border-b border-blue-100 py-3">
+                <Skeleton className="h-6 w-48" />
+              </CardHeader>
+              <CardContent className="pt-4 bg-white">
+                <Skeleton className="h-4 w-full mb-2" />
+                <Skeleton className="h-4 w-full mb-2" />
+                <Skeleton className="h-4 w-3/4" />
+                
+                <div className="grid grid-cols-1 lg:grid-cols-2 gap-6 mt-6">
+                  <div>
+                    <Skeleton className="h-60 w-full rounded-md" />
+                  </div>
+                  <div>
+                    <Skeleton className="h-60 w-full rounded-md" />
+                  </div>
+                </div>
+              </CardContent>
+            </Card>
+          ) : (
+            <div className="space-y-6">
+              {/* 학습 헤더 컴포넌트 */}
+              <LearningHeader username={data?.personalInfo.pname || ""} />
+              
+              {/* 학습 스타일 컴포넌트 */}
+              {learningData && (
+                <LearningStyle 
+                  username={data?.personalInfo.pname || ""}
+                  tendency1={{
+                    name: learningData.style.tnd1 || "",
+                    study: learningData.style.tnd1_study || "",
+                  }}
+                  tendency2={{
+                    name: learningData.style.tnd2 || "",
+                    study: learningData.style.tnd2_study || "",
+                  }}
+                  style1Data={learningData.style1Chart || []}
+                  style2Data={learningData.style2Chart || []}
+                />
+              )}
+              
+              {/* 적합한 학습법 1 컴포넌트 */}
+              {learningData && (
+                <StudyMethod 
+                  username={data?.personalInfo.pname || ""}
+                  tendencyName={learningData.style.tnd1 || ""}
+                  explanation={learningData.style.tnd1_way || ""}
+                  chartData={learningData.method1Chart || []}
+                  index={1}
+                />
+              )}
+              
+              {/* 적합한 학습법 2 컴포넌트 */}
+              {learningData && (
+                <StudyMethod 
+                  username={data?.personalInfo.pname || ""}
+                  tendencyName={learningData.style.tnd2 || ""}
+                  explanation={learningData.style.tnd2_way || ""}
+                  chartData={learningData.method2Chart || []}
+                  index={2}
+                />
+              )}
+            </div>
+          )}
         </TabsContent>
         
         <TabsContent value="subjects">
